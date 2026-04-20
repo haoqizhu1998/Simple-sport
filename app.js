@@ -4,12 +4,12 @@ App({
     userInfo: null,
     trainingHistory: [],
     dailyGoal: {
-      targetDistance: 5, // km
-      targetTime: 30, // min
+      targetDistance: 5,
+      targetTime: 30,
     },
     userProfile: {
       name: '',
-      sportType: 'running', // running, triathlon, other
+      sportType: 'running',
       goal: '',
       targetRace: '',
       targetTime: '',
@@ -19,38 +19,52 @@ App({
   },
 
   onLaunch() {
-    // 初始化本地数据
     this.initLocalData();
   },
 
   initLocalData() {
-    // 从本地存储加载用户数据
-    const userProfile = wx.getStorageSync('userProfile');
-    const trainingHistory = wx.getStorageSync('trainingHistory') || [];
-    
-    if (userProfile) {
-      this.globalData.userProfile = userProfile;
+    try {
+      const userProfile = wx.getStorageSync('userProfile');
+      const trainingHistory = wx.getStorageSync('trainingHistory') || [];
+      
+      if (userProfile) {
+        this.globalData.userProfile = userProfile;
+      }
+      this.globalData.trainingHistory = trainingHistory;
+    } catch (e) {
+      console.error('初始化数据失败:', e);
     }
-    this.globalData.trainingHistory = trainingHistory;
   },
 
   saveUserProfile(profile) {
     this.globalData.userProfile = profile;
-    wx.setStorageSync('userProfile', profile);
+    try {
+      wx.setStorageSync('userProfile', profile);
+    } catch (e) {
+      console.error('保存用户信息失败:', e);
+    }
   },
 
   saveTrainingRecord(record) {
     this.globalData.trainingHistory.unshift(record);
-    wx.setStorageSync('trainingHistory', this.globalData.trainingHistory);
-    
-    // 更新统计数据
-    const profile = this.globalData.userProfile;
-    profile.totalTrainings = this.globalData.trainingHistory.length;
-    profile.totalDistance = this.globalData.trainingHistory.reduce((sum, item) => sum + (parseFloat(item.distance) || 0), 0);
-    this.saveUserProfile(profile);
+    try {
+      wx.setStorageSync('trainingHistory', this.globalData.trainingHistory);
+      
+      const profile = this.globalData.userProfile;
+      profile.totalTrainings = this.globalData.trainingHistory.length;
+      profile.totalDistance = this.globalData.trainingHistory.reduce((sum, item) => sum + (parseFloat(item.distance) || 0), 0);
+      this.saveUserProfile(profile);
+    } catch (e) {
+      console.error('保存训练记录失败:', e);
+    }
   },
 
   getTrainingHistory() {
-    return wx.getStorageSync('trainingHistory') || [];
+    try {
+      return wx.getStorageSync('trainingHistory') || [];
+    } catch (e) {
+      console.error('获取训练历史失败:', e);
+      return [];
+    }
   }
 })
