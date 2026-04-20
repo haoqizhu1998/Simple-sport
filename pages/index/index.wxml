@@ -1,6 +1,6 @@
 <!-- pages/index/index.wxml - 新版首页 -->
 <view class="container">
-  <!-- 顶部：今日运动概览 -->
+  <!-- 头部 -->
   <view class="header">
     <view class="header-top">
       <view class="greeting">
@@ -9,29 +9,6 @@
       </view>
       <view class="status-badge {{bodyStatus.tagClass}}">
         <text>{{bodyStatus.tagText}}</text>
-      </view>
-    </view>
-    
-    <!-- 今日运动总览 -->
-    <view class="today-overview">
-      <view class="overview-main">
-        <text class="overview-value">{{todayStats.totalDistance}}</text>
-        <text class="overview-unit">km</text>
-      </view>
-      <view class="overview-label">今日总里程</view>
-    </view>
-    
-    <!-- 运动数据网格 -->
-    <view class="stats-grid">
-      <view class="stat-card">
-        <text class="stat-icon">⏱️</text>
-        <text class="stat-value">{{todayStats.totalDuration}}</text>
-        <text class="stat-label">训练时长</text>
-      </view>
-      <view class="stat-card">
-        <text class="stat-icon">🔥</text>
-        <text class="stat-value">{{todayStats.calories}}</text>
-        <text class="stat-label">消耗卡路里</text>
       </view>
     </view>
     
@@ -60,6 +37,23 @@
           <text class="sport-pace">{{todayStats.swimming.pace}}/100m</text>
         </view>
         <text class="sport-label">游泳</text>
+      </view>
+    </view>
+    
+    <!-- 训练时长+卡路里 -->
+    <view class="stats-row">
+      <view class="stat-item">
+        <text class="stat-icon">⏱️</text>
+        <text class="stat-value">{{todayStats.totalDuration}}</text>
+        <text class="stat-unit">min</text>
+        <text class="stat-label">训练时长</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-icon">🔥</text>
+        <text class="stat-value">{{todayStats.calories}}</text>
+        <text class="stat-unit">kcal</text>
+        <text class="stat-label">消耗热量</text>
       </view>
     </view>
   </view>
