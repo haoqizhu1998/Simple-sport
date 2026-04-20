@@ -1,0 +1,18 @@
+{
+  "projectname": "Simple运动",
+  "description": "让健康运动变得触手可得",
+  "appid": "wxd1fb4761d0bebad1",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "previewPlainText": false,
+    "minifyWXSS": true,
+    "minifyWXML": true
+  },
+  "compileType": "miniprogram",
+  "libVersion": "2.25.0",
+  "srcMiniprogramRoot": "miniprogram/",
+  "condition": {}
+}
