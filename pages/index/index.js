@@ -1,4 +1,4 @@
-// pages/index/index.js - Sigma风格
+// pages/index/index.js - 新版首页
 const app = getApp();
 const utils = require('../../utils/utils.js');
 
@@ -13,16 +13,21 @@ Page({
       tagClass: 'good',
       tagText: '状态良好'
     },
-    trainingSuggestion: {
-      main: '今日适合中等强度训练',
-      sub: '根据你的身体状态，建议进行45-60分钟的有氧训练，保持在2区心率',
-      tags: ['有氧训练', '心率2区', '45-60min']
-    },
     todayStats: {
-      distance: 0,
-      count: 0
+      totalDistance: 0,
+      totalDuration: 0,
+      calories: 0,
+      running: { distance: 0, pace: '--' },
+      cycling: { distance: 0, pace: '--' },
+      swimming: { distance: 0, pace: '--' }
     },
-    todayTrainings: [],
+    aiAdvice: {
+      title: '状态良好',
+      main: '今日适合中等强度训练',
+      details: '根据你的身体状态，建议进行45-60分钟的有氧训练，保持在2区心率。',
+      tags: ['有氧训练', '心率2区', '45-60min'],
+      coachNote: '坚持训练，为目标赛事做好准备 💪'
+    },
     weekData: [],
     weekLabels: ['一', '二', '三', '四', '五', '六', '日'],
     weekTotal: 0
@@ -37,11 +42,9 @@ Page({
   },
 
   loadData() {
-    // 当前日期
+    // 日期和问候
     const now = new Date();
     const dateStr = `${now.getMonth() + 1}月${now.getDate()}日 周${['日', '一', '二', '三', '四', '五', '六'][now.getDay()]}`;
-    
-    // 问候语
     const greeting = this.getGreeting();
     
     // 身体状态
@@ -50,23 +53,17 @@ Page({
       fatigue: 5,
       mood: 7
     };
-    bodyStatus.tagClass = this.getStatusTag(bodyStatus);
-    bodyStatus.tagText = this.getStatusText(bodyStatus);
+    this.updateBodyStatusTags(bodyStatus);
     
-    // 训练建议
-    const suggestion = this.generateSuggestion(bodyStatus);
-    
-    // 今日训练
+    // 今日训练统计
     const today = utils.formatDate(now, 'YYYY-MM-DD');
     const allRecords = wx.getStorageSync('trainingRecords') || [];
-    const todayTrainings = allRecords
-      .filter(item => item.date && item.date.startsWith(today))
-      .map(item => this.formatTrainingItem(item));
+    const todayRecords = allRecords.filter(item => item.date && item.date.startsWith(today));
     
-    const todayStats = {
-      distance: todayTrainings.reduce((sum, item) => sum + parseFloat(item.distance || 0), 0).toFixed(1),
-      count: todayTrainings.length
-    };
+    const todayStats = this.calculateTodayStats(todayRecords);
+    
+    // AI建议
+    const aiAdvice = this.generateAIAdvice(bodyStatus, todayStats);
     
     // 本周数据
     const weekData = this.calculateWeekData(allRecords);
@@ -76,9 +73,8 @@ Page({
       greeting,
       currentDate: dateStr,
       bodyStatus,
-      trainingSuggestion: suggestion,
       todayStats,
-      todayTrainings,
+      aiAdvice,
       weekData,
       weekTotal
     });
@@ -95,90 +91,112 @@ Page({
     return '夜深了';
   },
 
-  getStatusTag(bodyStatus) {
-    const { fatigue, mood, sleep } = bodyStatus;
-    const score = (10 - fatigue) + mood + (sleep >= 7 ? 2 : 0);
-    if (score >= 15) return 'good';
-    if (score >= 10) return 'normal';
-    return 'bad';
+  updateBodyStatusTags(bodyStatus) {
+    const score = (10 - bodyStatus.fatigue) + bodyStatus.mood + (bodyStatus.sleep >= 7 ? 2 : 0);
+    if (score >= 15) {
+      bodyStatus.tagClass = 'good';
+      bodyStatus.tagText = '状态良好';
+    } else if (score >= 10) {
+      bodyStatus.tagClass = 'normal';
+      bodyStatus.tagText = '状态一般';
+    } else {
+      bodyStatus.tagClass = 'bad';
+      bodyStatus.tagText = '需要休息';
+    }
   },
 
-  getStatusText(bodyStatus) {
-    const tag = this.getStatusTag(bodyStatus);
-    if (tag === 'good') return '状态良好';
-    if (tag === 'normal') return '状态一般';
-    return '需要休息';
+  calculateTodayStats(records) {
+    let totalDuration = 0;
+    let calories = 0;
+    let running = { distance: 0, pace: '--' };
+    let cycling = { distance: 0, pace: '--' };
+    let swimming = { distance: 0, pace: '--' };
+    
+    records.forEach(item => {
+      totalDuration += parseInt(item.duration) || 0;
+      calories += parseInt(item.calories) || Math.round((parseFloat(item.distance) || 0) * 60);
+      
+      if (item.type === 'run') {
+        running.distance += parseFloat(item.distance) || 0;
+        if (item.avgPace) running.pace = item.avgPace;
+      } else if (item.type === 'bike') {
+        cycling.distance += parseFloat(item.distance) || 0;
+        if (item.avgSpeed) cycling.pace = item.avgSpeed;
+      } else if (item.type === 'swim') {
+        swimming.distance += parseFloat(item.distance) || 0;
+        if (item.avgPace) swimming.pace = item.avgPace;
+      }
+    });
+    
+    return {
+      totalDistance: records.reduce((sum, item) => sum + (parseFloat(item.distance) || 0), 0).toFixed(1),
+      totalDuration: totalDuration || 0,
+      calories: calories || 0,
+      running: {
+        distance: running.distance.toFixed(1),
+        pace: running.pace
+      },
+      cycling: {
+        distance: cycling.distance.toFixed(1),
+        pace: cycling.pace
+      },
+      swimming: {
+        distance: swimming.distance.toFixed(1),
+        pace: swimming.pace
+      }
+    };
   },
 
-  generateSuggestion(bodyStatus) {
+  generateAIAdvice(bodyStatus, todayStats) {
     const { fatigue, mood, sleep } = bodyStatus;
     const energy = 10 - fatigue;
     
     if (sleep < 6) {
       return {
-        main: '睡眠不足，建议休息',
-        sub: '昨晚睡眠时间不足6小时，今天以休息为主，避免高强度训练',
-        tags: ['休息日', '充足睡眠']
+        title: '睡眠不足',
+        main: '建议休息或进行轻度活动',
+        details: '昨晚睡眠不足6小时，身体恢复不够充分。今天以休息或轻松活动为主，避免高强度训练。',
+        tags: ['休息日', '充足睡眠', '避免强度'],
+        coachNote: '睡眠是最好的恢复方式，今天给自己放个假吧 🛏️'
       };
     }
     
     if (fatigue >= 8) {
       return {
-        main: '身体疲劳较高',
-        sub: '今天以轻松活动或拉伸为主，不要勉强进行高强度训练',
-        tags: ['恢复训练', '拉伸放松']
+        title: '身体疲劳',
+        main: '建议休息或拉伸恢复',
+        details: '疲劳程度较高，身体需要更多恢复时间。今天可以进行30分钟轻松活动或全身拉伸，帮助身体恢复。',
+        tags: ['恢复训练', '拉伸放松', '30min以内'],
+        coachNote: '不要忽视身体的信号，休息是为了更好地出发 💆'
       };
     }
     
     if (energy >= 8 && mood >= 7) {
       return {
-        main: '状态极佳，适合强度训练',
-        sub: '今天身体状态非常好，可以进行间歇训练或力量训练',
-        tags: ['高强度', '间歇训练', '60-90min']
+        title: '状态极佳',
+        main: '适合进行强度训练',
+        details: '今天身体状态非常好，能量充沛。可以进行间歇训练、阈值训练或力量训练，挑战自己的极限。',
+        tags: ['高强度', '间歇训练', '60-90min'],
+        coachNote: '抓住状态好的日子，这样的训练会让你的水平突飞猛进 🚀'
       };
     }
     
     if (energy >= 5) {
       return {
-        main: '状态良好，适合中等强度',
-        sub: '可以进行45-60分钟的有氧训练，保持在2区心率',
-        tags: ['有氧训练', '心率2区', '45-60min']
+        title: '状态良好',
+        main: '适合中等强度有氧训练',
+        details: '身体状态恢复良好，可以进行45-60分钟的有氧训练，保持在2区心率，帮助提升有氧基础。',
+        tags: ['有氧训练', '心率2区', '45-60min'],
+        coachNote: '稳扎稳打，每一步都是在为你的目标积累力量 🏃'
       };
     }
     
     return {
-      main: '轻松活动即可',
-      sub: '今天以轻松活动或短时训练为主，不要过度消耗',
-      tags: ['轻松活动', '30min以内']
-    };
-  },
-
-  formatTrainingItem(item) {
-    const typeMap = {
-      run: { text: '跑步', icon: '🏃', class: 'run' },
-      bike: { text: '骑行', icon: '🚴', class: 'bike' },
-      swim: { text: '游泳', icon: '🏊', class: 'swim' },
-      strength: { text: '力量', icon: '💪', class: 'strength' }
-    };
-    const type = typeMap[item.type] || typeMap.run;
-    
-    let scoreText = '一般';
-    let scoreClass = 'normal';
-    if (item.score >= 85) {
-      scoreText = '优秀';
-      scoreClass = 'excellent';
-    } else if (item.score >= 70) {
-      scoreText = '良好';
-      scoreClass = 'good';
-    }
-    
-    return {
-      ...item,
-      typeText: type.text,
-      typeIcon: type.icon,
-      typeClass: type.class,
-      scoreText,
-      scoreClass
+      title: '轻松活动',
+      main: '以轻松活动为主',
+      details: '今天状态一般，建议进行30-40分钟的轻松活动，不要过度消耗，保持运动习惯即可。',
+      tags: ['轻松活动', '30-40min', '保持习惯'],
+      coachNote: '不是每天都需要高强度，保持热爱最重要 ❤️'
     };
   },
 
@@ -188,18 +206,17 @@ Page({
     const weekData = [];
     
     for (let i = 0; i < 7; i++) {
-      const targetDay = (dayOfWeek - 6 + i) % 7;
       const targetDate = new Date(today);
       targetDate.setDate(today.getDate() - (6 - i));
       const dateStr = utils.formatDate(targetDate, 'YYYY-MM-DD');
       
       const dayTotal = history
         .filter(item => item.date && item.date.startsWith(dateStr))
-        .reduce((sum, item) => sum + parseFloat(item.distance || 0), 0);
+        .reduce((sum, item) => sum + (parseFloat(item.distance) || 0), 0);
       
       weekData.push({
         value: dayTotal,
-        height: Math.max(8, Math.min(180, dayTotal * 10)),
+        height: Math.max(8, Math.min(160, dayTotal * 8)),
         active: dayTotal > 0
       });
     }
@@ -207,22 +224,18 @@ Page({
     return weekData;
   },
 
-  goToReview() {
+  goToReview(e) {
+    const type = e.currentTarget.dataset.type;
     wx.navigateTo({
-      url: '/pages/review/review'
+      url: '/pages/review/review' + (type ? '?type=' + type : '')
     });
   },
 
-  goToHistory() {
-    wx.switchTab({
-      url: '/pages/history/history'
+  uploadScreenshot() {
+    wx.showToast({
+      title: '截图识别开发中',
+      icon: 'none'
     });
-  },
-
-  viewDetail(e) {
-    const { id } = e.currentTarget.dataset;
-    wx.navigateTo({
-      url: `/pages/result/result?id=${id}`
-    });
+    // TODO: 实现截图识别功能
   }
 })

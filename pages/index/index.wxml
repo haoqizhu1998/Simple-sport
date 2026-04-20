@@ -1,99 +1,130 @@
-<!-- pages/index/index.wxml -->
+<!-- pages/index/index.wxml - 新版首页 -->
 <view class="container">
-  <!-- 头部 -->
+  <!-- 顶部：今日运动概览 -->
   <view class="header">
-    <view class="greeting">
-      <text class="greeting-text">{{greeting}}</text>
-      <text class="date-text">{{currentDate}}</text>
-    </view>
-    <view class="weather">
-      <text class="weather-icon">☀️</text>
-      <text class="weather-temp">24°C</text>
-    </view>
-  </view>
-
-  <!-- 身体状态 -->
-  <view class="status-section">
-    <view class="section-title">
-      <text>身体状态</text>
-      <view class="status-tags">
-        <text class="tag {{bodyStatus.tagClass}}">{{bodyStatus.tagText}}</text>
+    <view class="header-top">
+      <view class="greeting">
+        <text class="greeting-text">{{greeting}}</text>
+        <text class="date-text">{{currentDate}}</text>
       </view>
-    </view>
-    <view class="status-cards">
-      <view class="status-card">
-        <view class="status-icon sleep">😴</view>
-        <text class="status-value">{{bodyStatus.sleep}}h</text>
-        <text class="status-label">睡眠</text>
-      </view>
-      <view class="status-card">
-        <view class="status-icon energy">⚡</view>
-        <text class="status-value">{{10 - bodyStatus.fatigue}}</text>
-        <text class="status-label">活力值</text>
-      </view>
-      <view class="status-card">
-        <view class="status-icon mood">😊</view>
-        <text class="status-value">{{bodyStatus.mood}}</text>
-        <text class="status-label">心情</text>
-      </view>
-    </view>
-  </view>
-
-  <!-- AI建议 -->
-  <view class="suggestion-section">
-    <view class="ai-badge">
-      <text class="ai-icon">✨</text>
-      <text class="ai-text">AI建议</text>
-    </view>
-    <view class="suggestion-content">
-      <text class="suggestion-main">{{trainingSuggestion.main}}</text>
-      <text class="suggestion-sub">{{trainingSuggestion.sub}}</text>
-    </view>
-    <view class="suggestion-tags">
-      <text class="tag-item" wx:for="{{trainingSuggestion.tags}}" wx:key="index">{{item}}</text>
-    </view>
-  </view>
-
-  <!-- 今日训练 -->
-  <view class="today-section">
-    <view class="section-title">
-      <text>今日训练</text>
-      <view class="today-stats">
-        <text class="stat-num">{{todayStats.distance}}</text>
-        <text class="stat-unit">km</text>
-        <text class="stat-sep">·</text>
-        <text class="stat-num">{{todayStats.count}}</text>
-        <text class="stat-unit">次</text>
+      <view class="status-badge {{bodyStatus.tagClass}}">
+        <text>{{bodyStatus.tagText}}</text>
       </view>
     </view>
     
-    <view wx:if="{{todayTrainings.length > 0}}" class="training-list">
-      <view class="training-item" wx:for="{{todayTrainings}}" wx:key="id" bindtap="viewDetail" data-id="{{item.id}}">
-        <view class="training-left">
-          <view class="training-type {{item.type}}">{{item.typeIcon}}</view>
-          <view class="training-info">
-            <text class="training-name">{{item.typeText}}</text>
-            <text class="training-time">{{item.duration}}min · {{item.avgHR}}bpm</text>
-          </view>
-        </view>
-        <view class="training-right">
-          <text class="training-distance">{{item.distance}}km</text>
-          <text class="training-score {{item.scoreClass}}">{{item.scoreText}}</text>
-        </view>
+    <!-- 今日运动总览 -->
+    <view class="today-overview">
+      <view class="overview-main">
+        <text class="overview-value">{{todayStats.totalDistance}}</text>
+        <text class="overview-unit">km</text>
+      </view>
+      <view class="overview-label">今日总里程</view>
+    </view>
+    
+    <!-- 运动数据网格 -->
+    <view class="stats-grid">
+      <view class="stat-card">
+        <text class="stat-icon">⏱️</text>
+        <text class="stat-value">{{todayStats.totalDuration}}</text>
+        <text class="stat-label">训练时长</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-icon">🔥</text>
+        <text class="stat-value">{{todayStats.calories}}</text>
+        <text class="stat-label">消耗卡路里</text>
       </view>
     </view>
     
-    <view wx:else class="empty-training">
-      <text class="empty-text">今日暂无训练</text>
+    <!-- 三项运动数据 -->
+    <view class="sports-grid">
+      <view class="sport-card run" bindtap="goToReview" data-type="run">
+        <text class="sport-icon">🏃</text>
+        <view class="sport-info">
+          <text class="sport-distance">{{todayStats.running.distance}}km</text>
+          <text class="sport-pace">{{todayStats.running.pace}}/km</text>
+        </view>
+        <text class="sport-label">跑步</text>
+      </view>
+      <view class="sport-card bike" bindtap="goToReview" data-type="bike">
+        <text class="sport-icon">🚴</text>
+        <view class="sport-info">
+          <text class="sport-distance">{{todayStats.cycling.distance}}km</text>
+          <text class="sport-pace">{{todayStats.cycling.pace}}km/h</text>
+        </view>
+        <text class="sport-label">骑行</text>
+      </view>
+      <view class="sport-card swim" bindtap="goToReview" data-type="swim">
+        <text class="sport-icon">🏊</text>
+        <view class="sport-info">
+          <text class="sport-distance">{{todayStats.swimming.distance}}km</text>
+          <text class="sport-pace">{{todayStats.swimming.pace}}/100m</text>
+        </view>
+        <text class="sport-label">游泳</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI教练建议 -->
+  <view class="ai-section">
+    <view class="ai-header">
+      <view class="ai-badge">
+        <text class="ai-icon">✨</text>
+        <text class="ai-text">AI教练建议</text>
+      </view>
+      <view class="ai-team">
+        <text class="team-tag">铁三</text>
+        <text class="team-tag">康复</text>
+        <text class="team-tag">营养</text>
+      </view>
+    </view>
+    
+    <view class="ai-content">
+      <text class="ai-title">{{aiAdvice.title}}</text>
+      <text class="ai-main">{{aiAdvice.main}}</text>
+      <text class="ai-details">{{aiAdvice.details}}</text>
+    </view>
+    
+    <view class="ai-tags">
+      <text class="ai-tag" wx:for="{{aiAdvice.tags}}" wx:key="index">{{item}}</text>
+    </view>
+    
+    <view class="ai-footer">
+      <text class="coach-note">{{aiAdvice.coachNote}}</text>
+    </view>
+  </view>
+
+  <!-- 训练录入 -->
+  <view class="input-section">
+    <view class="section-header">
+      <text class="section-title">训练录入</text>
+    </view>
+    
+    <view class="input-options">
+      <view class="input-card" bindtap="goToReview">
+        <text class="input-icon">✏️</text>
+        <text class="input-label">手动录入</text>
+        <text class="input-desc">输入训练数据</text>
+      </view>
+      
+      <view class="input-card" bindtap="uploadScreenshot">
+        <text class="input-icon">📷</text>
+        <text class="input-label">截图识别</text>
+        <text class="input-desc">佳明/高驰/Keep</text>
+      </view>
+    </view>
+    
+    <view class="brand-hint">
+      <text>即将支持：Garmin · COROS · 小米手环 · Keep</text>
     </view>
   </view>
 
   <!-- 本周趋势 -->
   <view class="week-section">
-    <view class="section-title">
-      <text>本周趋势</text>
+    <view class="section-header">
+      <text class="section-title">本周趋势</text>
       <text class="week-total">本周 {{weekTotal}}km</text>
     </view>
+    
     <view class="week-chart">
       <view class="chart-bars">
         <view class="bar-item" wx:for="{{weekData}}" wx:key="index">
@@ -104,15 +135,11 @@
     </view>
   </view>
 
-  <!-- 快速操作 -->
-  <view class="action-section">
+  <!-- 底部操作 -->
+  <view class="action-bar">
     <button class="action-btn primary" bindtap="goToReview">
       <text class="action-icon">+</text>
       <text class="action-text">录入训练</text>
-    </button>
-    <button class="action-btn secondary" bindtap="goToHistory">
-      <text class="action-icon">📊</text>
-      <text class="action-text">训练记录</text>
     </button>
   </view>
 </view>
