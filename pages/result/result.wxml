@@ -1,0 +1,118 @@
+<!-- pages/result/result.wxml -->
+<view class="result-page" wx:if="{{result}}">
+  <!-- 头部卡片 -->
+  <view class="header-card">
+    <view class="result-header">
+      <view class="type-badge">
+        <text class="type-icon">{{getTrainingTypeIcon(result.trainingType)}}</text>
+        <text class="type-text">{{result.trainingType}}</text>
+      </view>
+      <view class="date-info">{{result.dateStr}}</view>
+    </view>
+
+    <!-- 评分圆环 -->
+    <view class="score-section">
+      <view class="score-ring">
+        <view class="score-ring-bg"></view>
+        <view class="score-ring-progress" style="--progress: {{result.score}}%; --color: {{getScoreColor(result.score)}}"></view>
+        <view class="score-center">
+          <text class="score-value">{{result.score}}</text>
+          <text class="score-label">分</text>
+        </view>
+      </view>
+      <view class="score-title">{{getScoreText(result.score)}}</view>
+      <view class="quality-tag {{scoreClass}}">{{result.quality}}</view>
+    </view>
+
+    <!-- 质量说明 -->
+    <view class="quality-desc">{{result.qualityDesc}}</view>
+  </view>
+
+  <!-- 训练数据 -->
+  <view class="data-card">
+    <view class="card-title">训练数据</view>
+    <view class="data-grid">
+      <view class="data-item">
+        <view class="data-icon">📍</view>
+        <view class="data-value">{{trainingData.distance}}</view>
+        <view class="data-unit">公里</view>
+      </view>
+      <view class="data-item">
+        <view class="data-icon">⏱️</view>
+        <view class="data-value">{{trainingData.duration}}</view>
+        <view class="data-unit">时长</view>
+      </view>
+      <view class="data-item">
+        <view class="data-icon">🚀</view>
+        <view class="data-value">{{trainingData.pace}}</view>
+        <view class="data-unit">配速/km</view>
+      </view>
+      <view class="data-item">
+        <view class="data-icon">❤️</view>
+        <view class="data-value">{{trainingData.heartRate}}</view>
+        <view class="data-unit">心率</view>
+      </view>
+      <view class="data-item">
+        <view class="data-icon">💪</view>
+        <view class="data-value">{{trainingData.rpe}}</view>
+        <view class="data-unit">RPE {{trainingData.rpeDesc}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 能力影响 -->
+  <view class="ability-card">
+    <view class="card-title">能力影响</view>
+    <view class="ability-list">
+      <view class="ability-item" wx:for="{{result.abilities}}" wx:key="index">
+        <view class="ability-icon">{{abilityIcons[item.name] || '⭐'}}</view>
+        <view class="ability-info">
+          <view class="ability-name">{{item.name}}</view>
+          <view class="ability-change {{item.change === '+' ? 'positive' : 'negative'}}">
+            {{item.change === '+' ? '提升' : '消耗'}} {{item.value}}
+          </view>
+        </view>
+        <view class="ability-indicator {{item.change === '+' ? 'up' : 'down'}}">
+          {{item.change === '+' ? '↑' : '↓'}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 明日建议 -->
+  <view class="suggestion-card">
+    <view class="card-title">📋 明日训练建议</view>
+    <view class="suggestion-list">
+      <view 
+        class="suggestion-item {{item.type === 'action' ? 'action' : ''}}"
+        wx:for="{{result.suggestions}}"
+        wx:key="index"
+      >
+        <view class="suggestion-icon">
+          {{item.type === 'action' ? '🎯' : '💡'}}
+        </view>
+        <text class="suggestion-text">{{item.text}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分享区域 -->
+  <view class="share-section">
+    <button class="share-btn" open-type="share">
+      <view class="share-icon">📤</view>
+      <text>分享给好友</text>
+    </button>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="bottom-actions">
+    <button class="btn-outline" bindtap="addMore">继续添加</button>
+    <button class="btn-filled" bindtap="viewHistory">查看历史</button>
+  </view>
+</view>
+
+<!-- 加载状态 -->
+<view class="loading-state" wx:if="{{!result}}">
+  <view class="loading-spinner"></view>
+  <text>加载中...</text>
+</view>

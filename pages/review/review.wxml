@@ -1,0 +1,146 @@
+<!-- pages/review/review.wxml -->
+<view class="review-page">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <view class="header-title">记录训练</view>
+    <view class="header-subtitle">输入训练数据，AI将为你分析训练效果</view>
+  </view>
+
+  <!-- 表单区域 -->
+  <view class="form-container">
+    <!-- 距离输入 -->
+    <view class="input-group">
+      <view class="input-label">
+        <text class="label-icon">📍</text>
+        <text>距离</text>
+        <text class="label-unit">(km)</text>
+      </view>
+      <input 
+        type="digit" 
+        class="input-field" 
+        placeholder="如：5.20"
+        value="{{formData.distance}}"
+        bindinput="onDistanceInput"
+      />
+    </view>
+
+    <!-- 配速输入 -->
+    <view class="input-group">
+      <view class="input-label">
+        <text class="label-icon">⏱️</text>
+        <text>配速</text>
+        <text class="label-unit">(min/km)</text>
+      </view>
+      <view class="pace-input-group">
+        <input 
+          type="number" 
+          class="pace-input" 
+          placeholder="分钟"
+          value="{{formData.paceMinutes}}"
+          bindinput="onPaceMinutesInput"
+        />
+        <text class="pace-separator">分</text>
+        <input 
+          type="number" 
+          class="pace-input" 
+          placeholder="秒"
+          value="{{formData.paceSeconds}}"
+          bindinput="onPaceSecondsInput"
+        />
+        <text class="pace-separator">秒</text>
+      </view>
+    </view>
+
+    <!-- 心率输入 -->
+    <view class="input-group">
+      <view class="input-label">
+        <text class="label-icon">❤️</text>
+        <text>心率</text>
+        <text class="label-unit">(可选, bpm)</text>
+      </view>
+      <input 
+        type="number" 
+        class="input-field" 
+        placeholder="如：145"
+        value="{{formData.heartRate}}"
+        bindinput="onHeartRateInput"
+      />
+    </view>
+
+    <!-- RPE选择 -->
+    <view class="input-group">
+      <view class="input-label">
+        <text class="label-icon">💪</text>
+        <text>主观感受 (RPE)</text>
+        <text class="label-unit">{{rpeDesc}}</text>
+      </view>
+      <view class="rpe-selector">
+        <view 
+          class="rpe-option {{formData.rpe == item ? 'active' : ''}}"
+          wx:for="{{[1,2,3,4,5,6,7,8,9,10]}}"
+          wx:key="index"
+          bindtap="onRPEChange"
+          data-value="{{item}}"
+        >
+          {{item}}
+        </view>
+      </view>
+      <view class="rpe-hints">
+        <text class="hint-left">轻松</text>
+        <text class="hint-center">中等</text>
+        <text class="hint-right">力竭</text>
+      </view>
+    </view>
+
+    <!-- 图片上传 -->
+    <view class="input-group">
+      <view class="input-label">
+        <text class="label-icon">📷</text>
+        <text>训练截图</text>
+        <text class="label-unit">(可选)</text>
+      </view>
+      <view class="image-upload-area">
+        <view class="image-list">
+          <view 
+            class="image-item {{index === 0 ? 'main' : ''}}"
+            wx:for="{{imageList}}"
+            wx:key="index"
+          >
+            <image 
+              src="{{item}}" 
+              mode="aspectFill"
+              bindtap="previewImage"
+              data-index="{{index}}"
+            />
+            <view class="delete-btn" bindtap="deleteImage" data-index="{{index}}">×</view>
+            <view class="main-tag" wx:if="{{index === 0}}">封面</view>
+          </view>
+          
+          <view class="upload-btn" bindtap="chooseImage" wx:if="{{imageList.length < 3}}">
+            <text class="upload-icon">+</text>
+            <text class="upload-text">添加截图</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="bottom-actions">
+    <button class="btn-secondary" bindtap="resetForm">重置</button>
+    <button 
+      class="btn-primary analyze-btn {{isAnalyzing ? 'loading' : ''}}" 
+      bindtap="startAnalysis"
+      disabled="{{isAnalyzing}}"
+    >
+      <view class="btn-content" wx:if="{{!isAnalyzing}}">
+        <text class="btn-icon">🤖</text>
+        <text>AI 分析</text>
+      </view>
+      <view class="loading-content" wx:else>
+        <view class="loading-spinner"></view>
+        <text>分析中...</text>
+      </view>
+    </button>
+  </view>
+</view>

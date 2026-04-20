@@ -1,0 +1,171 @@
+<!-- pages/profile/profile.wxml -->
+<view class="profile-page">
+  <!-- 用户信息卡片 -->
+  <view class="profile-card">
+    <view class="profile-bg"></view>
+    <view class="profile-content">
+      <view class="avatar-section">
+        <view class="avatar">
+          <text class="avatar-text">{{userProfile.name ? userProfile.name[0] : 'S'}}</text>
+        </view>
+        <view class="user-info">
+          <view class="user-name">{{userProfile.name || '未设置昵称'}}</view>
+          <view class="user-type">{{getSportTypeName(userProfile.sportType)}}</view>
+        </view>
+      </view>
+      
+      <view class="stats-row">
+        <view class="stat-item">
+          <text class="stat-value">{{userProfile.totalTrainings}}</text>
+          <text class="stat-label">训练次数</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-value">{{userProfile.totalDistance || 0}}</text>
+          <text class="stat-label">总公里数</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 目标设置 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">🏆 比赛目标</text>
+    </view>
+    <view class="section-content">
+      <view class="info-item" wx:if="{{userProfile.targetRace}}">
+        <view class="info-label">目标赛事</view>
+        <view class="info-value">{{userProfile.targetRace}}</view>
+      </view>
+      <view class="info-item" wx:if="{{userProfile.targetTime}}">
+        <view class="info-label">目标时间</view>
+        <view class="info-value highlight">{{userProfile.targetTime}}</view>
+      </view>
+      <view class="info-empty" wx:if="{{!userProfile.targetRace && !userProfile.targetTime}}">
+        <text>设置比赛目标，更好地规划训练</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 训练目标 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">🎯 训练目标</text>
+    </view>
+    <view class="section-content">
+      <view class="info-item" wx:if="{{userProfile.goal}}">
+        <view class="info-label">训练目标</view>
+        <view class="info-value">{{userProfile.goal}}</view>
+      </view>
+      <view class="info-empty" wx:if="{{!userProfile.goal}}">
+        <text>设定训练目标，让训练更有方向</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 编辑资料按钮 -->
+  <view class="edit-section" wx:if="{{!isEditing}}">
+    <button class="edit-btn" bindtap="startEdit">
+      <text class="edit-icon">✏️</text>
+      <text>编辑个人资料</text>
+    </button>
+  </view>
+
+  <!-- 编辑表单 -->
+  <view class="edit-form" wx:if="{{isEditing}}">
+    <view class="form-card">
+      <view class="form-title">编辑资料</view>
+      
+      <view class="form-group">
+        <view class="form-label">昵称</view>
+        <input 
+          class="form-input" 
+          placeholder="请输入昵称"
+          value="{{editForm.name}}"
+          bindinput="onNameInput"
+        />
+      </view>
+
+      <view class="form-group">
+        <view class="form-label">运动类型</view>
+        <picker 
+          mode="selector" 
+          range="{{sportTypeOptions}}"
+          range-key="name"
+          bindchange="onSportTypeChange"
+        >
+          <view class="form-picker">
+            <text>{{getSportTypeName(editForm.sportType)}}</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-group">
+        <view class="form-label">训练目标</view>
+        <input 
+          class="form-input" 
+          placeholder="如：每周跑步3次，每次5公里"
+          value="{{editForm.goal}}"
+          bindinput="onGoalInput"
+        />
+      </view>
+
+      <view class="form-group">
+        <view class="form-label">目标赛事</view>
+        <input 
+          class="form-input" 
+          placeholder="如：2024北京马拉松"
+          value="{{editForm.targetRace}}"
+          bindinput="onTargetRaceInput"
+        />
+      </view>
+
+      <view class="form-group">
+        <view class="form-label">目标完赛时间</view>
+        <input 
+          class="form-input" 
+          placeholder="如：4:30:00"
+          value="{{editForm.targetTime}}"
+          bindinput="onTargetTimeInput"
+        />
+      </view>
+
+      <view class="form-actions">
+        <button class="btn-cancel" bindtap="cancelEdit">取消</button>
+        <button class="btn-save" bindtap="saveProfile">保存</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能列表 -->
+  <view class="menu-section">
+    <view class="menu-item" bindtap="feedback">
+      <view class="menu-left">
+        <text class="menu-icon">💬</text>
+        <text class="menu-text">意见反馈</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="showAbout">
+      <view class="menu-left">
+        <text class="menu-icon">ℹ️</text>
+        <text class="menu-text">关于我们</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item danger" bindtap="clearAllData">
+      <view class="menu-left">
+        <text class="menu-icon">🗑️</text>
+        <text class="menu-text">清除数据</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 版本信息 -->
+  <view class="version-info">
+    <text>Simple运动 V1.0</text>
+  </view>
+</view>
