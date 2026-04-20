@@ -1,114 +1,118 @@
 <!-- pages/index/index.wxml -->
 <view class="container">
-  <!-- 未登录状态 -->
-  <view wx:if="{{!hasUserInfo}}" class="login-card">
-    <image class="login-icon" src="/assets/icons/profile.png" mode="aspectFit"></image>
-    <text class="login-title">欢迎使用Simple运动</text>
-    <text class="login-desc">登录后获取个性化训练建议</text>
-    <button class="login-btn" open-type="getUserInfo" bindgetuserinfo="onGotUserInfo">
-      微信一键登录
-    </button>
-    <button class="guest-btn" bindtap="guestExperience">
-      游客体验
-    </button>
+  <!-- 头部 -->
+  <view class="header">
+    <view class="greeting">
+      <text class="greeting-text">{{greeting}}</text>
+      <text class="date-text">{{currentDate}}</text>
+    </view>
+    <view class="weather">
+      <text class="weather-icon">☀️</text>
+      <text class="weather-temp">24°C</text>
+    </view>
   </view>
 
-  <!-- 已登录状态 -->
-  <view wx:if="{{hasUserInfo}}" class="main-content">
-    <!-- 头部问候 -->
-    <view class="header">
-      <view class="greeting">
-        <text class="greeting-text">{{greeting}}</text>
-        <text class="user-name">{{userInfo.nickName}}</text>
-      </view>
-      <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill" wx:if="{{userInfo.avatarUrl}}"></image>
-    </view>
-
-    <!-- 身体状态卡片 -->
-    <view class="card status-card" bindtap="goToBodyStatus">
-      <view class="card-header">
-        <text class="card-title">今日身体状态</text>
-        <text class="card-action">点击更新</text>
-      </view>
-      <view class="status-bars">
-        <view class="status-item">
-          <text class="status-label">睡眠</text>
-          <view class="progress-bar">
-            <view class="progress-fill sleep" style="width: {{bodyStatus.sleep * 10}}%"></view>
-          </view>
-          <text class="status-value">{{bodyStatus.sleep}}h</text>
-        </view>
-        <view class="status-item">
-          <text class="status-label">疲劳</text>
-          <view class="progress-bar">
-            <view class="progress-fill fatigue" style="width: {{bodyStatus.fatigue * 10}}%"></view>
-          </view>
-          <text class="status-value">{{bodyStatus.fatigue}}/10</text>
-        </view>
-        <view class="status-item">
-          <text class="status-label">心情</text>
-          <view class="progress-bar">
-            <view class="progress-fill mood" style="width: {{bodyStatus.mood * 10}}%"></view>
-          </view>
-          <text class="status-value">{{bodyStatus.mood}}/10</text>
-        </view>
+  <!-- 身体状态 -->
+  <view class="status-section">
+    <view class="section-title">
+      <text>身体状态</text>
+      <view class="status-tags">
+        <text class="tag {{bodyStatus.tagClass}}">{{bodyStatus.tagText}}</text>
       </view>
     </view>
-
-    <!-- AI训练建议 -->
-    <view class="card suggestion-card">
-      <view class="suggestion-icon">💡</view>
-      <view class="suggestion-content">
-        <text class="suggestion-title">AI训练建议</text>
-        <text class="suggestion-text">{{trainingSuggestion}}</text>
+    <view class="status-cards">
+      <view class="status-card">
+        <view class="status-icon sleep">😴</view>
+        <text class="status-value">{{bodyStatus.sleep}}h</text>
+        <text class="status-label">睡眠</text>
+      </view>
+      <view class="status-card">
+        <view class="status-icon energy">⚡</view>
+        <text class="status-value">{{10 - bodyStatus.fatigue}}</text>
+        <text class="status-label">活力值</text>
+      </view>
+      <view class="status-card">
+        <view class="status-icon mood">😊</view>
+        <text class="status-value">{{bodyStatus.mood}}</text>
+        <text class="status-label">心情</text>
       </view>
     </view>
+  </view>
 
-    <!-- 今日活动 -->
-    <view class="card activity-card">
-      <view class="card-header">
-        <text class="card-title">今日活动</text>
-        <view class="today-stats">
-          <text class="stat">{{todayStats.distance}}km</text>
-          <text class="stat-label">已训练</text>
-        </view>
-      </view>
-      
-      <view wx:if="{{todayTraining}}" class="activity-list">
-        <view class="activity-item" bindtap="viewTrainingDetail" data-id="{{todayTraining.id}}">
-          <view class="activity-info">
-            <text class="activity-type">{{todayTraining.typeText || '训练'}}</text>
-            <text class="activity-detail">{{todayTraining.distance}}km · {{todayTraining.duration}}min</text>
-          </view>
-          <view class="activity-score">
-            <text class="score">{{todayTraining.score || '--'}}</text>
-            <text class="score-label">评分</text>
-          </view>
-        </view>
-      </view>
-      
-      <view wx:else class="activity-empty">
-        <text class="empty-text">今日暂无训练记录</text>
+  <!-- AI建议 -->
+  <view class="suggestion-section">
+    <view class="ai-badge">
+      <text class="ai-icon">✨</text>
+      <text class="ai-text">AI建议</text>
+    </view>
+    <view class="suggestion-content">
+      <text class="suggestion-main">{{trainingSuggestion.main}}</text>
+      <text class="suggestion-sub">{{trainingSuggestion.sub}}</text>
+    </view>
+    <view class="suggestion-tags">
+      <text class="tag-item" wx:for="{{trainingSuggestion.tags}}" wx:key="index">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 今日训练 -->
+  <view class="today-section">
+    <view class="section-title">
+      <text>今日训练</text>
+      <view class="today-stats">
+        <text class="stat-num">{{todayStats.distance}}</text>
+        <text class="stat-unit">km</text>
+        <text class="stat-sep">·</text>
+        <text class="stat-num">{{todayStats.count}}</text>
+        <text class="stat-unit">次</text>
       </view>
     </view>
-
-    <!-- 本周概览 -->
-    <view class="card week-card">
-      <view class="card-header">
-        <text class="card-title">本周训练</text>
-      </view>
-      <view class="week-chart">
-        <view wx:for="{{weekData}}" wx:key="index" class="week-bar-container">
-          <view class="week-bar" style="height: {{item > 0 ? (item / 20 * 100) : 0}}%"></view>
-          <text class="week-label">{{weekLabels[index]}}</text>
+    
+    <view wx:if="{{todayTrainings.length > 0}}" class="training-list">
+      <view class="training-item" wx:for="{{todayTrainings}}" wx:key="id" bindtap="viewDetail" data-id="{{item.id}}">
+        <view class="training-left">
+          <view class="training-type {{item.type}}">{{item.typeIcon}}</view>
+          <view class="training-info">
+            <text class="training-name">{{item.typeText}}</text>
+            <text class="training-time">{{item.duration}}min · {{item.avgHR}}bpm</text>
+          </view>
+        </view>
+        <view class="training-right">
+          <text class="training-distance">{{item.distance}}km</text>
+          <text class="training-score {{item.scoreClass}}">{{item.scoreText}}</text>
         </view>
       </view>
     </view>
+    
+    <view wx:else class="empty-training">
+      <text class="empty-text">今日暂无训练</text>
+    </view>
+  </view>
 
-    <!-- 快速训练按钮 -->
-    <button class="add-btn" bindtap="goToReview">
-      <text class="add-icon">+</text>
-      <text class="add-text">录入训练</text>
+  <!-- 本周趋势 -->
+  <view class="week-section">
+    <view class="section-title">
+      <text>本周趋势</text>
+      <text class="week-total">本周 {{weekTotal}}km</text>
+    </view>
+    <view class="week-chart">
+      <view class="chart-bars">
+        <view class="bar-item" wx:for="{{weekData}}" wx:key="index">
+          <view class="bar {{item.active ? 'active' : ''}}" style="height: {{item.height}}rpx"></view>
+          <text class="bar-label">{{weekLabels[index]}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快速操作 -->
+  <view class="action-section">
+    <button class="action-btn primary" bindtap="goToReview">
+      <text class="action-icon">+</text>
+      <text class="action-text">录入训练</text>
+    </button>
+    <button class="action-btn secondary" bindtap="goToHistory">
+      <text class="action-icon">📊</text>
+      <text class="action-text">训练记录</text>
     </button>
   </view>
 </view>

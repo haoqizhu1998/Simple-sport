@@ -1,64 +1,17 @@
-/* pages/index/index.wxss */
+/* pages/index/index.wxss - Sigma风格 */
 .container {
   min-height: 100vh;
-  background: linear-gradient(180deg, #1A1A2E 0%, #16213E 100%);
-  padding: 20rpx;
-  padding-bottom: 120rpx;
-}
-
-/* 登录卡片 */
-.login-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 100rpx 40rpx;
-  margin-top: 200rpx;
-}
-
-.login-icon {
-  width: 160rpx;
-  height: 160rpx;
-  margin-bottom: 40rpx;
-}
-
-.login-title {
-  font-size: 40rpx;
-  font-weight: bold;
-  color: #fff;
-  margin-bottom: 16rpx;
-}
-
-.login-desc {
-  font-size: 28rpx;
-  color: #999;
-  margin-bottom: 60rpx;
-}
-
-.login-btn {
-  width: 80%;
-  background: linear-gradient(135deg, #00D9FF 0%, #007AFF 100%);
-  color: #fff;
-  border-radius: 50rpx;
-  font-size: 32rpx;
-  margin-bottom: 24rpx;
-}
-
-.guest-btn {
-  width: 80%;
-  background: transparent;
-  color: #999;
-  border: 1rpx solid #666;
-  border-radius: 50rpx;
-  font-size: 28rpx;
+  background: #0a0a0b;
+  padding: 0;
+  padding-bottom: 150rpx;
 }
 
 /* 头部 */
 .header {
+  padding: 120rpx 40rpx 40rpx;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 20rpx 10rpx;
-  margin-bottom: 30rpx;
+  align-items: flex-start;
 }
 
 .greeting {
@@ -67,265 +20,412 @@
 }
 
 .greeting-text {
-  font-size: 28rpx;
-  color: #999;
+  font-size: 56rpx;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -1rpx;
 }
 
-.user-name {
-  font-size: 40rpx;
-  font-weight: bold;
-  color: #fff;
+.date-text {
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.5);
   margin-top: 8rpx;
 }
 
-.avatar {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
-  border: 4rpx solid #00D9FF;
+.weather {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 16rpx 24rpx;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 40rpx;
+  backdrop-filter: blur(20px);
 }
 
-/* 卡片通用样式 */
-.card {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 24rpx;
-  padding: 30rpx;
-  margin-bottom: 24rpx;
-  backdrop-filter: blur(10px);
+.weather-icon {
+  font-size: 32rpx;
 }
 
-.card-header {
+.weather-temp {
+  font-size: 28rpx;
+  color: #fff;
+  font-weight: 500;
+}
+
+/* 通用标题 */
+.section-title {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24rpx;
 }
 
-.card-title {
+.section-title text:first-child {
   font-size: 32rpx;
-  font-weight: bold;
+  font-weight: 600;
   color: #fff;
-}
-
-.card-action {
-  font-size: 24rpx;
-  color: #00D9FF;
 }
 
 /* 身体状态 */
-.status-card {
-  border-left: 6rpx solid #00D9FF;
+.status-section {
+  padding: 0 40rpx;
+  margin-bottom: 48rpx;
 }
 
-.status-bars {
+.status-tags {
+  display: flex;
+  gap: 12rpx;
+}
+
+.tag {
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+}
+
+.tag.good {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.tag.normal {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+}
+
+.tag.bad {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.status-cards {
+  display: flex;
+  gap: 20rpx;
+}
+
+.status-card {
+  flex: 1;
+  padding: 32rpx 24rpx;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 28rpx;
   display: flex;
   flex-direction: column;
-  gap: 20rpx;
-}
-
-.status-item {
-  display: flex;
   align-items: center;
-  gap: 20rpx;
+  backdrop-filter: blur(40px);
 }
 
-.status-label {
-  width: 80rpx;
-  font-size: 28rpx;
-  color: #ccc;
-}
-
-.progress-bar {
-  flex: 1;
-  height: 16rpx;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8rpx;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  border-radius: 8rpx;
-  transition: width 0.3s;
-}
-
-.progress-fill.sleep {
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-}
-
-.progress-fill.fatigue {
-  background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
-}
-
-.progress-fill.mood {
-  background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+.status-icon {
+  font-size: 48rpx;
+  margin-bottom: 16rpx;
 }
 
 .status-value {
-  width: 80rpx;
-  font-size: 28rpx;
+  font-size: 40rpx;
+  font-weight: 700;
   color: #fff;
-  text-align: right;
+}
+
+.status-label {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 8rpx;
 }
 
 /* AI建议 */
-.suggestion-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 24rpx;
-  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(0, 122, 255, 0.1) 100%);
-  border: 1rpx solid rgba(0, 217, 255, 0.3);
+.suggestion-section {
+  margin: 0 40rpx 48rpx;
+  padding: 36rpx;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 32rpx;
+  backdrop-filter: blur(40px);
 }
 
-.suggestion-icon {
-  font-size: 48rpx;
+.ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx 20rpx;
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.ai-icon {
+  font-size: 24rpx;
+}
+
+.ai-text {
+  font-size: 22rpx;
+  color: #a78bfa;
+  font-weight: 500;
 }
 
 .suggestion-content {
-  flex: 1;
+  margin-bottom: 20rpx;
 }
 
-.suggestion-title {
-  font-size: 28rpx;
-  font-weight: bold;
-  color: #00D9FF;
+.suggestion-main {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #fff;
   display: block;
   margin-bottom: 8rpx;
 }
 
-.suggestion-text {
-  font-size: 28rpx;
-  color: #fff;
+.suggestion-sub {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.6);
   line-height: 1.5;
 }
 
-/* 今日活动 */
+.suggestion-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.tag-item {
+  padding: 10rpx 20rpx;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16rpx;
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* 今日训练 */
+.today-section {
+  padding: 0 40rpx;
+  margin-bottom: 48rpx;
+}
+
 .today-stats {
   display: flex;
   align-items: baseline;
-  gap: 8rpx;
+  gap: 4rpx;
 }
 
-.stat {
+.stat-num {
   font-size: 36rpx;
-  font-weight: bold;
-  color: #00D9FF;
-}
-
-.stat-label {
-  font-size: 24rpx;
-  color: #999;
-}
-
-.activity-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24rpx;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 16rpx;
-  margin-bottom: 16rpx;
-}
-
-.activity-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.activity-type {
-  font-size: 32rpx;
-  font-weight: bold;
+  font-weight: 700;
   color: #fff;
 }
 
-.activity-detail {
-  font-size: 26rpx;
-  color: #999;
-  margin-top: 8rpx;
+.stat-unit {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.5);
 }
 
-.activity-score {
+.stat-sep {
+  margin: 0 8rpx;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.training-list {
   display: flex;
   flex-direction: column;
+  gap: 16rpx;
+}
+
+.training-item {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
+  padding: 28rpx;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 24rpx;
+  backdrop-filter: blur(20px);
 }
 
-.score {
+.training-left {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.training-type {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 36rpx;
-  font-weight: bold;
-  color: #00D9FF;
 }
 
-.score-label {
+.training-type.run {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.training-type.bike {
+  background: rgba(16, 185, 129, 0.2);
+}
+
+.training-type.swim {
+  background: rgba(6, 182, 212, 0.2);
+}
+
+.training-type.strength {
+  background: rgba(249, 115, 22, 0.2);
+}
+
+.training-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.training-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #fff;
+}
+
+.training-time {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 4rpx;
+}
+
+.training-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.training-distance {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #fff;
+}
+
+.training-score {
   font-size: 22rpx;
-  color: #999;
+  margin-top: 4rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 10rpx;
 }
 
-.activity-empty {
-  padding: 40rpx;
+.training-score.excellent {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.training-score.good {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+}
+
+.training-score.normal {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+}
+
+.empty-training {
+  padding: 60rpx;
   text-align: center;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 24rpx;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
 }
 
 .empty-text {
   font-size: 28rpx;
-  color: #666;
+  color: rgba(255, 255, 255, 0.3);
 }
 
-/* 本周训练 */
+/* 本周趋势 */
+.week-section {
+  padding: 0 40rpx;
+  margin-bottom: 48rpx;
+}
+
+.week-total {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.5);
+}
+
 .week-chart {
+  padding: 32rpx;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 28rpx;
+  backdrop-filter: blur(20px);
+}
+
+.chart-bars {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: flex-end;
   height: 200rpx;
-  padding-top: 20rpx;
 }
 
-.week-bar-container {
+.bar-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100%;
+  flex: 1;
 }
 
-.week-bar {
-  width: 40rpx;
-  background: linear-gradient(180deg, #00D9FF 0%, #007AFF 100%);
-  border-radius: 8rpx 8rpx 0 0;
+.bar {
+  width: 48rpx;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12rpx;
   min-height: 8rpx;
-  margin-top: auto;
+  transition: all 0.3s;
 }
 
-.week-label {
-  font-size: 24rpx;
-  color: #999;
-  margin-top: 16rpx;
+.bar.active {
+  background: linear-gradient(180deg, #8b5cf6 0%, #3b82f6 100%);
 }
 
-/* 添加按钮 */
-.add-btn {
+.bar-label {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 12rpx;
+}
+
+/* 快速操作 */
+.action-section {
   position: fixed;
-  bottom: 40rpx;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 600rpx;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24rpx 40rpx;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+  display: flex;
+  gap: 20rpx;
+  background: rgba(10, 10, 11, 0.8);
+  backdrop-filter: blur(40px);
+}
+
+.action-btn {
+  flex: 1;
   height: 100rpx;
-  background: linear-gradient(135deg, #00D9FF 0%, #007AFF 100%);
   border-radius: 50rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16rpx;
-  box-shadow: 0 10rpx 40rpx rgba(0, 217, 255, 0.3);
+  gap: 12rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  border: none;
 }
 
-.add-icon {
-  font-size: 40rpx;
-  font-weight: bold;
+.action-btn.primary {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
   color: #fff;
+  box-shadow: 0 10rpx 40rpx rgba(139, 92, 246, 0.3);
 }
 
-.add-text {
+.action-btn.secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.action-icon {
   font-size: 32rpx;
-  font-weight: bold;
-  color: #fff;
 }
