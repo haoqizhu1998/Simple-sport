@@ -5,10 +5,12 @@
     <image class="login-icon" src="/assets/icons/profile.png" mode="aspectFit"></image>
     <text class="login-title">欢迎使用Simple运动</text>
     <text class="login-desc">登录后获取个性化训练建议</text>
-    <button class="login-btn" open-type="getPhoneNumber" bindgetphonenumber="onGotUserInfo">
+    <button class="login-btn" open-type="getUserInfo" bindgetuserinfo="onGotUserInfo">
       微信一键登录
     </button>
-    <button class="guest-btn" bindtap="loadData">游客体验</button>
+    <button class="guest-btn" bindtap="guestExperience">
+      游客体验
+    </button>
   </view>
 
   <!-- 已登录状态 -->
@@ -19,7 +21,7 @@
         <text class="greeting-text">{{greeting}}</text>
         <text class="user-name">{{userInfo.nickName}}</text>
       </view>
-      <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+      <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill" wx:if="{{userInfo.avatarUrl}}"></image>
     </view>
 
     <!-- 身体状态卡片 -->

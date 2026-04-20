@@ -13,7 +13,7 @@ Page({
     },
     todayTraining: null,
     bodyStatus: {
-      sleep: 0,
+      sleep: 7,
       fatigue: 5,
       mood: 5
     },
@@ -28,19 +28,16 @@ Page({
   },
 
   onShow() {
-    if (this.data.hasUserInfo) {
-      this.loadData();
-    }
+    this.loadData();
   },
 
   checkLogin() {
     const userInfo = wx.getStorageSync('userInfo');
-    if (userInfo) {
+    if (userInfo && userInfo.nickName) {
       this.setData({
         userInfo,
         hasUserInfo: true
       });
-      this.loadData();
     } else {
       this.setData({
         hasUserInfo: false
@@ -59,8 +56,27 @@ Page({
         userInfo,
         hasUserInfo: true
       });
-      this.loadData();
+      wx.showToast({
+        title: '登录成功',
+        icon: 'success'
+      });
     }
+  },
+
+  guestExperience() {
+    // 游客体验模式
+    const guestUser = {
+      nickName: '游客',
+      avatarUrl: '/assets/icons/profile.png'
+    };
+    this.setData({
+      userInfo: guestUser,
+      hasUserInfo: true
+    });
+    wx.showToast({
+      title: '欢迎体验',
+      icon: 'success'
+    });
   },
 
   loadData() {
