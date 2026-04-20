@@ -1,179 +1,163 @@
 // pages/profile/profile.js
-const app = getApp();
-const utils = require('../../utils/utils.js');
-
 Page({
   data: {
-    userProfile: {
-      name: '',
-      sportType: 'running',
-      goal: '',
-      targetRace: '',
-      targetTime: '',
-      totalTrainings: 0,
-      totalDistance: 0
+    userInfo: null,
+    bodyStatus: {
+      sleep: 7,
+      fatigue: 5,
+      mood: 5
     },
-    sportTypeOptions: [
-      { key: 'running', name: '跑步', icon: '🏃' },
-      { key: 'triathlon', name: '铁三', icon: '🚴' },
-      { key: 'swimming', name: '游泳', icon: '🏊' },
-      { key: 'cycling', name: '骑行', icon: '🚵' },
-      { key: 'other', name: '其他', icon: '⭐' }
-    ],
-    isEditing: false,
-    editForm: {}
+    currentRace: null,
+    stats: {
+      totalTrainings: 0,
+      totalDistance: 0,
+      totalDays: 0
+    },
+    action: ''
   },
 
-  onLoad() {
-    this.loadProfile();
+  onLoad(options) {
+    if (options.action) {
+      this.setData({ action: options.action });
+      // 如果是设置身体状态或赛事，直接打开设置
+      if (options.action === 'bodyStatus') {
+        this.showBodyStatusModal();
+      } else if (options.action === 'setRace') {
+        this.showRaceModal();
+      }
+    }
+    this.loadData();
   },
 
   onShow() {
-    this.loadProfile();
+    this.loadData();
   },
 
-  loadProfile() {
-    const profile = app.globalData.userProfile || {};
+  loadData() {
+    const userInfo = wx.getStorageSync('userInfo') || {};
+    const bodyStatus = wx.getStorageSync('bodyStatus') || { sleep: 7, fatigue: 5, mood: 5 };
+    const currentRace = wx.getStorageSync('currentRace');
+    const records = wx.getStorageSync('trainingRecords') || [];
+    
+    const totalDistance = records.reduce((sum, r) => sum + parseFloat(r.distance || 0), 0);
+    const dates = [...new Set(records.map(r => r.date ? r.date.substring(0, 10) : ''))];
+    
     this.setData({
-      userProfile: {
-        name: profile.name || '运动达人',
-        sportType: profile.sportType || 'running',
-        goal: profile.goal || '',
-        targetRace: profile.targetRace || '',
-        targetTime: profile.targetTime || '',
-        totalTrainings: profile.totalTrainings || 0,
-        totalDistance: profile.totalDistance || 0
+      userInfo,
+      bodyStatus,
+      currentRace,
+      stats: {
+        totalTrainings: records.length,
+        totalDistance: totalDistance.toFixed(1),
+        totalDays: dates.length
       }
     });
   },
 
-  // 编辑资料
-  startEdit() {
-    this.setData({
-      isEditing: true,
-      editForm: { ...this.data.userProfile }
-    });
+  onGotUserInfo(e) {
+    if (e.detail.userInfo) {
+      const userInfo = {
+        ...e.detail.userInfo,
+        openId: wx.getStorageSync('openId') || ''
+      };
+      wx.setStorageSync('userInfo', userInfo);
+      this.setData({ userInfo });
+    }
   },
 
-  // 取消编辑
-  cancelEdit() {
-    this.setData({
-      isEditing: false,
-      editForm: {}
-    });
+  showBodyStatusModal() {
+    this.setData({ showBodyStatus: true });
   },
 
-  // 输入处理
-  onNameInput(e) {
-    this.setData({
-      'editForm.name': e.detail.value
-    });
+  hideBodyStatusModal() {
+    this.setData({ showBodyStatus: false, action: '' });
   },
 
-  onSportTypeChange(e) {
-    const index = e.detail.value;
-    const sportType = this.data.sportTypeOptions[index].key;
-    this.setData({
-      'editForm.sportType': sportType
-    });
+  onSleepChange(e) {
+    this.setData('bodyStatus.sleep', parseInt(e.detail.value));
   },
 
-  onGoalInput(e) {
-    this.setData({
-      'editForm.goal': e.detail.value
-    });
+  onFatigueChange(e) {
+    this.setData('bodyStatus.fatigue', parseInt(e.detail.value));
   },
 
-  onTargetRaceInput(e) {
-    this.setData({
-      'editForm.targetRace': e.detail.value
-    });
+  onMoodChange(e) {
+    this.setData('bodyStatus.mood', parseInt(e.detail.value));
   },
 
-  onTargetTimeInput(e) {
-    this.setData({
-      'editForm.targetTime': e.detail.value
-    });
+  saveBodyStatus() {
+    wx.setStorageSync('bodyStatus', this.data.bodyStatus);
+    wx.showToast({ title: '保存成功', icon: 'success' });
+    this.hideBodyStatusModal();
   },
 
-  // 保存资料
-  saveProfile() {
-    const { editForm } = this.data;
-    
-    if (!editForm.name || editForm.name.trim() === '') {
-      wx.showToast({
-        title: '请输入姓名',
-        icon: 'none'
-      });
+  showRaceModal() {
+    this.setData({ showRaceModal: true });
+  },
+
+  hideRaceModal() {
+    this.setData({ showRaceModal: false, action: '' });
+  },
+
+  onRaceNameInput(e) {
+    this.setData({ newRaceName: e.detail.value });
+  },
+
+  onRaceDateChange(e) {
+    this.setData({ newRaceDate: e.detail.value });
+  },
+
+  onRaceTypeChange(e) {
+    const types = ['run', 'triathlon', 'bike', 'swim'];
+    this.setData({ newRaceType: types[e.detail.value] });
+  },
+
+  saveRace() {
+    if (!this.data.newRaceName || !this.data.newRaceDate) {
+      wx.showToast({ title: '请填写完整信息', icon: 'none' });
       return;
     }
 
-    const profile = {
-      ...app.globalData.userProfile,
-      ...editForm
+    const typeMap = {
+      'run': '马拉松',
+      'triathlon': '铁人三项',
+      'bike': '骑行赛',
+      'swim': '游泳赛'
     };
 
-    app.saveUserProfile(profile);
-
-    this.setData({
-      userProfile: profile,
-      isEditing: false
-    });
-
-    wx.showToast({
-      title: '保存成功',
-      icon: 'success'
-    });
+    const race = {
+      name: this.data.newRaceName,
+      date: this.data.newRaceDate,
+      type: this.data.newRaceType || 'run',
+      typeText: typeMap[this.data.newRaceType] || '马拉松',
+      preparationDays: 84
+    };
+    
+    wx.setStorageSync('currentRace', race);
+    this.setData({ currentRace: race });
+    wx.showToast({ title: '赛事设置成功', icon: 'success' });
+    this.hideRaceModal();
   },
 
-  // 获取运动类型名称
-  getSportTypeName(key) {
-    const option = this.data.sportTypeOptions.find(item => item.key === key);
-    return option ? `${option.icon} ${option.name}` : '🏃 跑步';
-  },
-
-  // 清除数据
   clearAllData() {
     wx.showModal({
-      title: '警告',
-      content: '确定要清除所有训练数据吗？此操作不可恢复！',
+      title: '确认清空',
+      content: '确定要清空所有训练数据吗？此操作不可恢复',
       success: (res) => {
         if (res.confirm) {
-          wx.showModal({
-            title: '再次确认',
-            content: '请再次确认，清除后数据将无法恢复',
-            success: (res2) => {
-              if (res2.confirm) {
-                wx.clearStorageSync();
-                app.globalData.userProfile = {};
-                app.globalData.trainingHistory = [];
-                this.loadProfile();
-                wx.showToast({
-                  title: '数据已清除',
-                  icon: 'success'
-                });
-              }
-            }
-          });
+          wx.removeStorageSync('trainingRecords');
+          wx.showToast({ title: '已清空', icon: 'success' });
+          this.loadData();
         }
       }
     });
   },
 
-  // 关于我们
-  showAbout() {
+  about() {
     wx.showModal({
-      title: '关于 Simple运动',
-      content: 'Simple运动 V1.0\n\nAI训练复盘助手，帮助你科学分析训练效果，提升运动表现。\n\n© 2024 Simple运动',
+      title: 'Simple运动',
+      content: '版本 1.0.0\n\n让健康运动变得触手可得',
       showCancel: false
-    });
-  },
-
-  // 意见反馈
-  feedback() {
-    wx.showToast({
-      title: '功能开发中',
-      icon: 'none'
     });
   }
 })

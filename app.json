@@ -4,6 +4,7 @@
     "pages/review/review",
     "pages/result/result",
     "pages/history/history",
+    "pages/race/race",
     "pages/profile/profile"
   ],
   "window": {
@@ -26,16 +27,16 @@
         "selectedIconPath": "assets/icons/home-active.png"
       },
       {
-        "pagePath": "pages/review/review",
-        "text": "训练复盘",
-        "iconPath": "assets/icons/review.png",
-        "selectedIconPath": "assets/icons/review-active.png"
-      },
-      {
         "pagePath": "pages/history/history",
-        "text": "历史",
+        "text": "活动",
         "iconPath": "assets/icons/history.png",
         "selectedIconPath": "assets/icons/history-active.png"
+      },
+      {
+        "pagePath": "pages/race/race",
+        "text": "赛事",
+        "iconPath": "assets/icons/race.png",
+        "selectedIconPath": "assets/icons/race-active.png"
       },
       {
         "pagePath": "pages/profile/profile",

@@ -1,0 +1,94 @@
+<!-- pages/race/race.wxml -->
+<view class="container">
+  <!-- 无赛事状态 -->
+  <view wx:if="{{!currentRace}}" class="empty-state">
+    <view class="empty-icon">🏆</view>
+    <text class="empty-title">设置你的目标赛事</text>
+    <text class="empty-desc">设定目标后，我们将为你制定科学的训练计划</text>
+    <button class="set-race-btn" bindtap="setRace">
+      <text>添加目标赛事</text>
+    </button>
+  </view>
+
+  <!-- 有赛事状态 -->
+  <view wx:if="{{currentRace}}" class="race-content">
+    <!-- 倒计时卡片 -->
+    <view class="countdown-card">
+      <view class="countdown-header">
+        <text class="race-name">{{currentRace.name}}</text>
+        <text class="race-type">{{currentRace.typeText}}</text>
+      </view>
+      <view class="countdown-body">
+        <view class="countdown-number">{{daysUntilRace}}</view>
+        <text class="countdown-label">天后</text>
+      </view>
+      <view class="countdown-date">{{currentRace.date}}</view>
+    </view>
+
+    <!-- 备赛进度 -->
+    <view class="card progress-card">
+      <view class="card-header">
+        <text class="card-title">备赛进度</text>
+        <text class="progress-text">{{progress}}%</text>
+      </view>
+      <view class="progress-bar">
+        <view class="progress-fill" style="width: {{progress}}%"></view>
+      </view>
+      <view class="progress-info">
+        <text class="info-item">已备赛 {{currentRace.preparationDays - daysUntilRace}} 天</text>
+        <text class="info-item">目标 {{currentRace.preparationDays}} 天</text>
+      </view>
+    </view>
+
+    <!-- 本周训练重点 -->
+    <view class="card plan-card">
+      <view class="card-header">
+        <text class="card-title">本周训练重点</text>
+      </view>
+      <view class="plan-content" wx:if="{{trainingPlan}}">
+        <view class="plan-item">
+          <text class="plan-icon">🏊</text>
+          <text class="plan-text">游泳 {{trainingPlan.weeklyTraining.swim}}</text>
+        </view>
+        <view class="plan-item">
+          <text class="plan-icon">🚴</text>
+          <text class="plan-text">骑行 {{trainingPlan.weeklyTraining.bike}}</text>
+        </view>
+        <view class="plan-item">
+          <text class="plan-icon">🏃</text>
+          <text class="plan-text">跑步 {{trainingPlan.weeklyTraining.run}}</text>
+        </view>
+        <view class="plan-item">
+          <text class="plan-icon">💪</text>
+          <text class="plan-text">力量 {{trainingPlan.weeklyTraining.strength}}</text>
+        </view>
+      </view>
+      <view class="plan-focus">
+        <text class="focus-label">当前重点：</text>
+        <text class="focus-text">{{trainingPlan.focusThisWeek}}</text>
+      </view>
+    </view>
+
+    <!-- 补给建议 -->
+    <view class="card tips-card">
+      <view class="card-header">
+        <text class="card-title">备赛建议</text>
+      </view>
+      <view class="tips-list">
+        <view class="tip-item">
+          <text class="tip-icon">🍽️</text>
+          <text class="tip-text">{{trainingPlan.nutrition}}</text>
+        </view>
+        <view class="tip-item">
+          <text class="tip-icon">💡</text>
+          <text class="tip-text">{{trainingPlan.tips}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 历史训练 -->
+    <button class="view-history-btn" bindtap="viewHistory">
+      查看训练记录
+    </button>
+  </view>
+</view>
