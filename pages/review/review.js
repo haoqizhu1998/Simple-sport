@@ -6,6 +6,7 @@ const { analyzeTraining } = require('../../utils/api.js');
 Page({
   data: {
     formData: {
+      type: 'run',
       distance: '',
       paceMinutes: '',
       paceSeconds: '',
@@ -14,6 +15,7 @@ Page({
     },
     imageList: [],
     isAnalyzing: false,
+    rpeDesc: '有些吃力',
     rules: [
       { field: 'distance', label: '距离', required: true, type: 'number', min: 0.1, max: 200 },
       { field: 'paceMinutes', label: '配速', required: true, type: 'number', min: 1, max: 30 },
@@ -24,11 +26,24 @@ Page({
 
   onLoad(options) {
     // 如果从首页跳转带了预填数据
+    if (options.type) {
+      this.setData({
+        'formData.type': options.type
+      });
+    }
     if (options.distance) {
       this.setData({
         'formData.distance': options.distance
       });
     }
+  },
+
+  // 运动类型选择
+  onTypeChange(e) {
+    const type = e.currentTarget.dataset.type;
+    this.setData({
+      'formData.type': type
+    });
   },
 
   // 输入处理
@@ -57,8 +72,15 @@ Page({
   },
 
   onRPEChange(e) {
+    const value = parseInt(e.currentTarget.dataset.value);
+    const rpeDescMap = {
+      1: '休息', 2: '很轻松', 3: '轻松', 4: '较轻松',
+      5: '有些吃力', 6: '吃力', 7: '较吃力', 8: '很吃力',
+      9: '极其吃力', 10: '力竭'
+    };
     this.setData({
-      'formData.rpe': parseInt(e.detail.value)
+      'formData.rpe': value,
+      rpeDesc: rpeDescMap[value] || ''
     });
   },
 
@@ -125,10 +147,11 @@ Page({
   async startAnalysis() {
     if (!this.validateForm()) return;
 
-    const { distance, paceMinutes, paceSeconds, heartRate, rpe } = this.data.formData;
+    const { type, distance, paceMinutes, paceSeconds, heartRate, rpe } = this.data.formData;
     const pace = parseInt(paceMinutes || 0) + (parseInt(paceSeconds || 0)) / 60;
 
     const analysisData = {
+      type: type,
       distance: parseFloat(distance),
       pace: pace,
       heartRate: heartRate ? parseInt(heartRate) : null,
@@ -146,6 +169,7 @@ Page({
       const record = {
         id: Date.now().toString(),
         ...analysisData,
+        trainingType: type,
         paceStr: utils.formatPace(pace),
         duration: utils.calculateDuration(parseFloat(distance), pace),
         dateStr: utils.formatDate(new Date(), 'MM-DD HH:mm'),
@@ -188,13 +212,15 @@ Page({
   resetForm() {
     this.setData({
       formData: {
+        type: 'run',
         distance: '',
         paceMinutes: '',
         paceSeconds: '',
         heartRate: '',
         rpe: 5
       },
-      imageList: []
+      imageList: [],
+      rpeDesc: '有些吃力'
     });
   }
 })

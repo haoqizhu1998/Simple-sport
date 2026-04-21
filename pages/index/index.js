@@ -237,5 +237,11 @@ Page({
       icon: 'none'
     });
     // TODO: 实现截图识别功能
+  },
+
+  goToOCR() {
+    wx.navigateTo({
+      url: '/pages/ocr/ocr'
+    });
   }
 })

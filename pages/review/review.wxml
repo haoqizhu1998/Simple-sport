@@ -8,6 +8,48 @@
 
   <!-- 表单区域 -->
   <view class="form-container">
+    <!-- 运动类型选择 -->
+    <view class="input-group">
+      <view class="input-label">
+        <text class="label-icon">🏊</text>
+        <text>运动类型</text>
+      </view>
+      <view class="type-selector">
+        <view 
+          class="type-btn {{formData.type === 'run' ? 'active' : ''}}"
+          bindtap="onTypeChange"
+          data-type="run"
+        >
+          <text class="type-icon">🏃</text>
+          <text class="type-name">跑步</text>
+        </view>
+        <view 
+          class="type-btn {{formData.type === 'bike' ? 'active' : ''}}"
+          bindtap="onTypeChange"
+          data-type="bike"
+        >
+          <text class="type-icon">🚴</text>
+          <text class="type-name">骑行</text>
+        </view>
+        <view 
+          class="type-btn {{formData.type === 'swim' ? 'active' : ''}}"
+          bindtap="onTypeChange"
+          data-type="swim"
+        >
+          <text class="type-icon">🏊</text>
+          <text class="type-name">游泳</text>
+        </view>
+        <view 
+          class="type-btn {{formData.type === 'strength' ? 'active' : ''}}"
+          bindtap="onTypeChange"
+          data-type="strength"
+        >
+          <text class="type-icon">💪</text>
+          <text class="type-name">力量</text>
+        </view>
+      </view>
+    </view>
+
     <!-- 距离输入 -->
     <view class="input-group">
       <view class="input-label">

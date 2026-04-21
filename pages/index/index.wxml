@@ -1,4 +1,4 @@
-<!-- pages/index/index.wxml - 新版首页 -->
+<!-- pages/index/index.wxml - 首页 -->
 <view class="container">
   <!-- 头部 -->
   <view class="header">
@@ -59,17 +59,13 @@
   </view>
 
   <!-- AI教练建议 -->
-  <view class="ai-section">
+  <view class="ai-section" bindtap="goToBodyStatus">
     <view class="ai-header">
       <view class="ai-badge">
         <text class="ai-icon">✨</text>
         <text class="ai-text">AI教练建议</text>
       </view>
-      <view class="ai-team">
-        <text class="team-tag">铁三</text>
-        <text class="team-tag">康复</text>
-        <text class="team-tag">营养</text>
-      </view>
+      <text class="ai-edit">✏️</text>
     </view>
     
     <view class="ai-content">
@@ -80,10 +76,6 @@
     
     <view class="ai-tags">
       <text class="ai-tag" wx:for="{{aiAdvice.tags}}" wx:key="index">{{item}}</text>
-    </view>
-    
-    <view class="ai-footer">
-      <text class="coach-note">{{aiAdvice.coachNote}}</text>
     </view>
   </view>
 
@@ -100,15 +92,11 @@
         <text class="input-desc">输入训练数据</text>
       </view>
       
-      <view class="input-card" bindtap="uploadScreenshot">
+      <view class="input-card" bindtap="goToOCR">
         <text class="input-icon">📷</text>
         <text class="input-label">截图识别</text>
         <text class="input-desc">佳明/高驰/Keep</text>
       </view>
-    </view>
-    
-    <view class="brand-hint">
-      <text>即将支持：Garmin · COROS · 小米手环 · Keep</text>
     </view>
   </view>
 
@@ -127,13 +115,5 @@
         </view>
       </view>
     </view>
-  </view>
-
-  <!-- 底部操作 -->
-  <view class="action-bar">
-    <button class="action-btn primary" bindtap="goToReview">
-      <text class="action-icon">+</text>
-      <text class="action-text">录入训练</text>
-    </button>
   </view>
 </view>

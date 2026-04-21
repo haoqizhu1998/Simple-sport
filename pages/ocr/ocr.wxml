@@ -1,0 +1,129 @@
+<!-- pages/ocr/ocr.wxml - 截图识别页面 -->
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <view class="header-title">截图识别</view>
+    <view class="header-subtitle">上传运动App截图，AI自动解析训练数据</view>
+  </view>
+
+  <!-- 支持的平台 -->
+  <view class="platform-section">
+    <view class="section-title">支持的平台</view>
+    <view class="platform-grid">
+      <view class="platform-item">
+        <text class="platform-icon">🔴</text>
+        <text class="platform-name">Garmin</text>
+      </view>
+      <view class="platform-item">
+        <text class="platform-icon">🟠</text>
+        <text class="platform-name">COROS</text>
+      </view>
+      <view class="platform-item">
+        <text class="platform-icon">🟢</text>
+        <text class="platform-name">Keep</text>
+      </view>
+      <view class="platform-item">
+        <text class="platform-icon">🔵</text>
+        <text class="platform-name">悦跑圈</text>
+      </view>
+      <view class="platform-item">
+        <text class="platform-icon">🟣</text>
+        <text class="platform-name">咕咚</text>
+      </view>
+      <view class="platform-item">
+        <text class="platform-icon">🟡</text>
+        <text class="platform-name">Nike</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 上传区域 -->
+  <view class="upload-section">
+    <view class="upload-area" bindtap="chooseImage">
+      <image wx:if="{{imagePath}}" src="{{imagePath}}" mode="aspectFit" class="preview-image"></image>
+      <view wx:if="{{!imagePath}}" class="upload-placeholder">
+        <text class="upload-icon">📷</text>
+        <text class="upload-text">点击上传截图</text>
+        <text class="upload-hint">支持 JPG、PNG 格式</text>
+      </view>
+    </view>
+    
+    <!-- 重新选择按钮 -->
+    <view class="rechoose-btn" wx:if="{{imagePath}}" bindtap="chooseImage">
+      <text>🔄 重新选择</text>
+    </view>
+  </view>
+
+  <!-- 识别结果 -->
+  <view class="result-section" wx:if="{{recognizedData}}">
+    <view class="result-header">
+      <text class="result-title">✅ 识别结果</text>
+    </view>
+    
+    <view class="result-card">
+      <!-- 运动类型 -->
+      <view class="result-item">
+        <text class="result-label">运动类型</text>
+        <text class="result-value type-tag {{recognizedData.type}}">{{recognizedData.typeText}}</text>
+      </view>
+      
+      <!-- 距离 -->
+      <view class="result-item" wx:if="{{recognizedData.distance}}">
+        <text class="result-label">距离</text>
+        <text class="result-value">{{recognizedData.distance}} km</text>
+      </view>
+      
+      <!-- 时长 -->
+      <view class="result-item" wx:if="{{recognizedData.duration}}">
+        <text class="result-label">时长</text>
+        <text class="result-value">{{recognizedData.duration}}</text>
+      </view>
+      
+      <!-- 配速/速度 -->
+      <view class="result-item" wx:if="{{recognizedData.pace || recognizedData.speed}}">
+        <text class="result-label">配速/速度</text>
+        <text class="result-value">{{recognizedData.pace || recognizedData.speed}}</text>
+      </view>
+      
+      <!-- 心率 -->
+      <view class="result-item" wx:if="{{recognizedData.heartRate}}">
+        <text class="result-label">平均心率</text>
+        <text class="result-value">{{recognizedData.heartRate}} bpm</text>
+      </view>
+      
+      <!-- 卡路里 -->
+      <view class="result-item" wx:if="{{recognizedData.calories}}">
+        <text class="result-label">消耗热量</text>
+        <text class="result-value">{{recognizedData.calories}} kcal</text>
+      </view>
+    </view>
+
+    <!-- 保存按钮 -->
+    <view class="action-btns">
+      <button class="btn-save" bindtap="saveRecord">保存到训练记录</button>
+      <button class="btn-cancel" bindtap="clearResult">取消</button>
+    </view>
+  </view>
+
+  <!-- 识别提示 -->
+  <view class="tips-section" wx:if="{{!recognizedData && !imagePath}}">
+    <view class="tips-card">
+      <view class="tips-header">📌 识别技巧</view>
+      <view class="tips-list">
+        <view class="tips-item">• 尽量选择训练记录详情页截图</view>
+        <view class="tips-item">• 确保截图清晰，文字可辨认</view>
+        <view class="tips-item">• 尽量包含完整的训练数据</view>
+        <view class="tips-item">• 骑行运动请上传有速度/里程的页面</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-section" wx:if="{{isLoading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">AI正在识别中...</text>
+      <text class="loading-hint">请稍候</text>
+    </view>
+  </view>
+</view>
