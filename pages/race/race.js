@@ -1,77 +1,113 @@
 // pages/race/race.js
-const utils = require('../../utils/utils.js');
+const app = getApp();
 
 Page({
   data: {
     currentRace: null,
-    trainingPlan: null,
-    countdown: 0,
     daysUntilRace: 0,
-    progress: 0
+    progress: 0,
+    trainingPlan: null,
+    recommendRaces: [
+      { name: '北京马拉松', date: '2026年10月', icon: '🏃', type: '跑步' },
+      { name: '上海铁人三项', date: '2026年5月', icon: '🏊', type: '铁三' },
+      { name: '环青海湖骑行', date: '2026年7月', icon: '🚴', type: '骑行' }
+    ]
   },
 
   onLoad() {
-    this.loadRaceData();
+    this.loadCurrentRace();
   },
 
   onShow() {
-    this.loadRaceData();
+    this.loadCurrentRace();
   },
 
-  loadRaceData() {
+  loadCurrentRace() {
     const race = wx.getStorageSync('currentRace');
-    const trainingRecords = wx.getStorageSync('trainingRecords') || [];
-    
     if (race) {
-      const daysUntil = this.calculateDaysUntil(race.date);
-      const totalDays = race.preparationDays || 84;
-      const progress = Math.round(((totalDays - daysUntil) / totalDays) * 100);
+      const daysUntilRace = this.calculateDaysUntil(race.date);
+      const progress = Math.round((1 - daysUntilRace / race.preparationDays) * 100);
       
       this.setData({
         currentRace: race,
-        daysUntilRace: daysUntil,
-        progress: progress > 0 ? progress : 0,
-        trainingPlan: this.generateTrainingPlan(race, daysUntil)
+        daysUntilRace,
+        progress: Math.max(0, Math.min(100, progress))
       });
-    } else {
-      this.setData({
-        currentRace: null
-      });
+      
+      this.loadTrainingPlan();
     }
   },
 
   calculateDaysUntil(dateStr) {
     const target = new Date(dateStr);
-    const today = new Date();
-    const diff = target - today;
+    const now = new Date();
+    const diff = target - now;
     return Math.ceil(diff / (1000 * 60 * 60 * 24));
   },
 
-  generateTrainingPlan(race, daysUntil) {
-    if (!race) return null;
-    
-    // 生成简化的训练计划摘要
-    const weekTraining = {
-      swim: '2-3次',
-      bike: '2-3次',
-      run: '3-4次',
-      strength: '1-2次'
+  loadTrainingPlan() {
+    const plan = {
+      weeklyTraining: {
+        run: '20km',
+        bike: '60km',
+        swim: '3km',
+        strength: '2次'
+      },
+      focusThisWeek: '提升有氧耐力',
+      nutrition: '增加蛋白质摄入，保持碳水化合物充足',
+      tips: '注意休息，避免过度训练'
     };
     
-    const focusThisWeek = daysUntil <= 7 ? '减量恢复' : 
-                          daysUntil <= 14 ? '保持状态' : '持续积累';
-    
-    return {
-      weeklyTraining: weekTraining,
-      focusThisWeek: focusThisWeek,
-      nutrition: race.type === 'triathlon' ? '注意碳水化合物摄入' : '比赛前注意补糖',
-      tips: daysUntil <= 7 ? '减少训练量，保证睡眠' : '保持训练节奏'
-    };
+    this.setData({ trainingPlan: plan });
   },
 
   setRace() {
-    wx.navigateTo({
-      url: '/pages/profile/profile?action=setRace'
+    wx.showModal({
+      title: '添加目标赛事',
+      editable: true,
+      placeholderText: '请输入赛事名称（如：北京马拉松）',
+      success: (res) => {
+        if (res.confirm && res.content) {
+          const race = {
+            name: res.content,
+            date: '2026-10-15',
+            type: '跑步',
+            typeText: '🏃 跑步',
+            icon: '🏃',
+            target: '完赛',
+            preparationDays: 180
+          };
+          
+          wx.setStorageSync('currentRace', race);
+          this.loadCurrentRace();
+          
+          wx.showToast({
+            title: '赛事已添加',
+            icon: 'success'
+          });
+        }
+      }
+    });
+  },
+
+  selectRace(e) {
+    const race = e.currentTarget.dataset.race;
+    const fullRace = {
+      name: race.name,
+      date: '2026-10-15',
+      type: race.type,
+      typeText: race.icon + ' ' + race.type,
+      icon: race.icon,
+      target: '完赛',
+      preparationDays: 180
+    };
+    
+    wx.setStorageSync('currentRace', fullRace);
+    this.loadCurrentRace();
+    
+    wx.showToast({
+      title: '赛事已选择',
+      icon: 'success'
     });
   },
 
@@ -79,5 +115,11 @@ Page({
     wx.switchTab({
       url: '/pages/history/history'
     });
+  },
+
+  startTraining() {
+    wx.switchTab({
+      url: '/pages/review/review'
+    });
   }
-})
+});

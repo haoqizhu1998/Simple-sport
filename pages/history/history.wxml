@@ -1,44 +1,53 @@
-<!-- pages/history/history.wxml -->
-<view class="history-page">
-  <!-- 统计概览 -->
-  <view class="stats-overview">
-    <view class="overview-bg"></view>
-    <view class="overview-content">
-      <view class="stats-grid">
-        <view class="stat-item">
-          <view class="stat-value">{{totalStats.count}}</view>
-          <view class="stat-label">训练次数</view>
-        </view>
-        <view class="stat-divider"></view>
-        <view class="stat-item">
-          <view class="stat-value">{{totalStats.distance}}</view>
-          <view class="stat-label">总公里数</view>
-        </view>
-        <view class="stat-divider"></view>
-        <view class="stat-item">
-          <view class="stat-value">{{totalStats.avgScore}}</view>
-          <view class="stat-label">平均评分</view>
-        </view>
+<!-- pages/history/history.wxml - 训练历史 -->
+<view class="container">
+  <!-- 头部统计 -->
+  <view class="header">
+    <view class="header-top">
+      <text class="header-title">训练记录</text>
+      <text class="header-date">{{currentDate}}</text>
+    </view>
+    
+    <!-- 统计卡片 -->
+    <view class="stats-card">
+      <view class="stat-item">
+        <text class="stat-value">{{totalStats.count}}</text>
+        <text class="stat-unit">次</text>
+        <text class="stat-label">训练次数</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-value">{{totalStats.distance}}</text>
+        <text class="stat-unit">km</text>
+        <text class="stat-label">总里程</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-value">{{totalStats.avgScore}}</text>
+        <text class="stat-unit">分</text>
+        <text class="stat-label">平均评分</text>
       </view>
     </view>
   </view>
 
   <!-- 筛选标签 -->
   <view class="filter-section">
-    <view class="filter-tabs">
-      <view 
-        class="filter-tab {{selectedFilter === item.key ? 'active' : ''}}"
-        wx:for="{{filterOptions}}"
-        wx:key="key"
-        bindtap="onFilterChange"
-        data-key="{{item.key}}"
-      >
-        {{item.name}}
+    <scroll-view scroll-x class="filter-scroll">
+      <view class="filter-tabs">
+        <view 
+          class="filter-tab {{selectedFilter === item.key ? 'active' : ''}}"
+          wx:for="{{filterOptions}}"
+          wx:key="key"
+          bindtap="onFilterChange"
+          data-key="{{item.key}}"
+        >
+          <text class="tab-icon">{{item.icon}}</text>
+          <text class="tab-text">{{item.name}}</text>
+        </view>
       </view>
-    </view>
+    </scroll-view>
   </view>
 
-  <!-- 训练记录列表 -->
+  <!-- 训练列表 -->
   <view class="history-list" wx:if="{{!isEmpty}}">
     <view 
       class="history-item"
@@ -47,7 +56,7 @@
       bindtap="viewDetail"
       data-id="{{item.id}}"
     >
-      <!-- 左侧分数 -->
+      <!-- 左侧评分 -->
       <view class="item-score">
         <view class="score-circle" style="border-color: {{getScoreColor(item.score)}}">
           <text class="score-value" style="color: {{getScoreColor(item.score)}}">{{item.score}}</text>
@@ -61,42 +70,50 @@
             <text class="type-icon">{{getTypeIcon(item.trainingType)}}</text>
             <text class="type-name">{{item.trainingType}}</text>
           </view>
-          <view class="item-date">{{item.dateStr}}</view>
+          <text class="item-date">{{item.dateStr}}</text>
         </view>
 
         <view class="item-stats">
           <view class="stat-tag">
+            <text class="tag-icon">📏</text>
             <text class="tag-value">{{item.distance}}</text>
             <text class="tag-unit">km</text>
           </view>
           <view class="stat-tag">
+            <text class="tag-icon">⏱️</text>
             <text class="tag-value">{{item.paceStr || item.pace}}</text>
             <text class="tag-unit">/km</text>
           </view>
           <view class="stat-tag">
+            <text class="tag-icon">🔥</text>
             <text class="tag-value">{{item.duration}}</text>
-            <text class="tag-unit">时长</text>
+            <text class="tag-unit">min</text>
           </view>
         </view>
 
-        <view class="item-quality">
-          <view class="quality-badge {{item.quality}}">{{item.quality}}</view>
+        <view class="item-footer">
+          <view class="quality-badge {{item.quality}}">
+            <text class="quality-text">{{item.quality}}</text>
+          </view>
           <text class="quality-desc">{{item.qualityDesc}}</text>
         </view>
       </view>
 
-      <!-- 删除按钮 -->
-      <view class="item-action" catchtap="deleteRecord" data-id="{{item.id}}" data-index="{{index}}">
-        <text>🗑️</text>
+      <!-- 右侧操作 -->
+      <view class="item-arrow">
+        <text>›</text>
       </view>
     </view>
   </view>
 
   <!-- 空状态 -->
   <view class="empty-state" wx:if="{{isEmpty}}">
-    <image src="/assets/icons/empty-history.png" mode="aspectFit"></image>
+    <view class="empty-icon">📋</view>
     <text class="empty-title">暂无训练记录</text>
     <text class="empty-desc">开始记录你的第一次训练吧</text>
-    <button class="btn-primary" bindtap="goToReview">开始训练</button>
+    <button class="btn-primary" bindtap="goToReview">
+      <text class="btn-icon">✏️</text>
+      <text>开始训练</text>
+    </button>
   </view>
 </view>

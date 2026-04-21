@@ -1,25 +1,29 @@
-/* pages/race/race.wxss - Sigma风格 */
+/* pages/race/race.wxss - Sigma深色风格 */
 .container {
   min-height: 100vh;
   background: #0a0a0b;
-  padding: 0;
   padding-bottom: 40rpx;
 }
 
+/* 无赛事状态 */
 .empty-state {
+  padding-top: 160rpx;
+}
+
+.empty-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 200rpx 40rpx;
+  padding: 0 40rpx;
 }
 
 .empty-icon {
-  font-size: 120rpx;
+  font-size: 140rpx;
   margin-bottom: 32rpx;
 }
 
 .empty-title {
-  font-size: 36rpx;
+  font-size: 40rpx;
   font-weight: 700;
   color: #fff;
   margin-bottom: 16rpx;
@@ -29,75 +33,186 @@
   font-size: 28rpx;
   color: rgba(255, 255, 255, 0.4);
   text-align: center;
-  margin-bottom: 48rpx;
   line-height: 1.6;
+  margin-bottom: 48rpx;
 }
 
-.set-race-btn {
-  width: 80%;
-  height: 96rpx;
-  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
-  border-radius: 48rpx;
+.btn-primary {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 12rpx;
+  width: 400rpx;
+  height: 96rpx;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  border-radius: 48rpx;
   font-size: 32rpx;
   font-weight: 600;
   color: #fff;
   box-shadow: 0 10rpx 40rpx rgba(139, 92, 246, 0.3);
 }
 
-.race-content {
-  padding: 0 40rpx;
+.btn-icon {
+  font-size: 36rpx;
 }
 
+/* 赛事推荐 */
+.recommend-section {
+  padding: 48rpx 40rpx 0;
+}
+
+.section-title {
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 24rpx;
+}
+
+.recommend-list {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 24rpx;
+  overflow: hidden;
+}
+
+.recommend-item {
+  display: flex;
+  align-items: center;
+  padding: 28rpx;
+  border-bottom: 1rpx solid rgba(255, 255, 255, 0.06);
+}
+
+.recommend-item:last-child {
+  border-bottom: none;
+}
+
+.recommend-icon {
+  font-size: 48rpx;
+  margin-right: 20rpx;
+}
+
+.recommend-info {
+  flex: 1;
+}
+
+.recommend-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #fff;
+  display: block;
+  margin-bottom: 6rpx;
+}
+
+.recommend-date {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.recommend-arrow {
+  font-size: 40rpx;
+  color: rgba(255, 255, 255, 0.3);
+  font-weight: 300;
+}
+
+/* 有赛事状态 */
+.race-content {
+  padding: 120rpx 40rpx 0;
+}
+
+/* 倒计时卡片 */
 .countdown-card {
-  padding: 48rpx;
+  padding: 40rpx;
   background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
-  border: 1px solid rgba(139, 92, 246, 0.3);
+  border: 1rpx solid rgba(139, 92, 246, 0.3);
   border-radius: 32rpx;
+  margin-bottom: 24rpx;
+}
+
+.countdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.race-badge {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 10rpx 20rpx;
+  background: rgba(139, 92, 246, 0.2);
+  border-radius: 20rpx;
+}
+
+.race-icon {
+  font-size: 32rpx;
+}
+
+.race-type {
+  font-size: 24rpx;
+  color: #a78bfa;
+}
+
+.countdown-days {
+  font-size: 64rpx;
+  font-weight: 800;
+  color: #8b5cf6;
+}
+
+.countdown-main {
   text-align: center;
-  margin-top: 120rpx;
+  margin-bottom: 32rpx;
 }
 
 .race-name {
-  font-size: 40rpx;
+  font-size: 44rpx;
   font-weight: 700;
   color: #fff;
   display: block;
   margin-bottom: 8rpx;
 }
 
-.race-type {
-  font-size: 26rpx;
-  color: #a78bfa;
-  margin-bottom: 32rpx;
-}
-
-.countdown-number {
-  font-size: 140rpx;
-  font-weight: 800;
-  color: #8b5cf6;
-  line-height: 1;
-}
-
-.countdown-label {
-  font-size: 36rpx;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.countdown-date {
+.race-date {
   font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.4);
-  margin-top: 16rpx;
+  color: rgba(255, 255, 255, 0.5);
 }
 
+.countdown-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 48rpx;
+}
+
+.countdown-info {
+  text-align: center;
+}
+
+.info-label {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.4);
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.info-value {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #fff;
+}
+
+.countdown-divider {
+  width: 1rpx;
+  height: 48rpx;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* 通用卡片 */
 .card {
-  margin-top: 32rpx;
   padding: 32rpx;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1rpx solid rgba(255, 255, 255, 0.06);
   border-radius: 28rpx;
+  margin-bottom: 24rpx;
 }
 
 .card-header {
@@ -113,10 +228,11 @@
   color: #fff;
 }
 
-.card-value {
-  font-size: 28rpx;
+/* 进度卡片 */
+.progress-value {
+  font-size: 32rpx;
+  font-weight: 700;
   color: #8b5cf6;
-  font-weight: 600;
 }
 
 .progress-bar {
@@ -124,6 +240,7 @@
   background: rgba(255, 255, 255, 0.08);
   border-radius: 8rpx;
   overflow: hidden;
+  margin-bottom: 20rpx;
 }
 
 .progress-fill {
@@ -133,32 +250,88 @@
   transition: width 0.3s;
 }
 
+.progress-tags {
+  display: flex;
+  gap: 16rpx;
+}
+
+.progress-tag {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx 16rpx;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12rpx;
+}
+
+.tag-icon {
+  font-size: 20rpx;
+}
+
+.tag-text {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* 训练计划卡片 */
 .plan-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16rpx;
+  margin-bottom: 20rpx;
 }
 
 .plan-item {
-  padding: 24rpx;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 20rpx;
   display: flex;
   align-items: center;
   gap: 16rpx;
+  padding: 24rpx;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 20rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.06);
+}
+
+.plan-item.run {
+  border-color: rgba(34, 197, 94, 0.3);
+  background: rgba(34, 197, 94, 0.05);
+}
+
+.plan-item.bike {
+  border-color: rgba(59, 130, 246, 0.3);
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.plan-item.swim {
+  border-color: rgba(59, 200, 240, 0.3);
+  background: rgba(59, 200, 240, 0.05);
+}
+
+.plan-item.strength {
+  border-color: rgba(251, 146, 60, 0.3);
+  background: rgba(251, 146, 60, 0.05);
 }
 
 .plan-icon {
   font-size: 40rpx;
 }
 
-.plan-text {
+.plan-info {
+  flex: 1;
+}
+
+.plan-value {
   font-size: 28rpx;
+  font-weight: 700;
   color: #fff;
+  display: block;
+}
+
+.plan-label {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .focus-box {
-  margin-top: 20rpx;
   padding: 20rpx;
   background: rgba(139, 92, 246, 0.1);
   border-radius: 16rpx;
@@ -169,27 +342,66 @@
   color: rgba(255, 255, 255, 0.5);
 }
 
-.focus-text {
+.focus-value {
   font-size: 28rpx;
   color: #a78bfa;
   font-weight: 600;
   margin-left: 8rpx;
 }
 
+/* 建议卡片 */
+.tips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
 .tip-item {
   display: flex;
-  align-items: flex-start;
   gap: 16rpx;
-  margin-bottom: 16rpx;
 }
 
 .tip-icon {
-  font-size: 32rpx;
+  font-size: 36rpx;
+  flex-shrink: 0;
+}
+
+.tip-content {
+  flex: 1;
+}
+
+.tip-title {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #fff;
+  display: block;
+  margin-bottom: 6rpx;
 }
 
 .tip-text {
   font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.7);
-  flex: 1;
+  color: rgba(255, 255, 255, 0.6);
   line-height: 1.5;
+}
+
+/* 操作按钮 */
+.action-section {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 16rpx;
+  margin-top: 32rpx;
+}
+
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  height: 96rpx;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1rpx solid rgba(255, 255, 255, 0.1);
+  border-radius: 48rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #fff;
 }

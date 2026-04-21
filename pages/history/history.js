@@ -1,34 +1,32 @@
 // pages/history/history.js
 const app = getApp();
-const utils = require('../../utils/utils.js');
 
 Page({
   data: {
+    currentDate: '',
     historyList: [],
     filteredList: [],
-    weekList: [],
-    monthList: [],
     totalStats: {
       count: 0,
-      distance: 0,
+      distance: '0.0',
       avgScore: 0
     },
     selectedFilter: 'all',
     filterOptions: [
-      { key: 'all', name: '全部' },
-      { key: 'week', name: '本周' },
-      { key: 'month', name: '本月' }
+      { key: 'all', name: '全部', icon: '📋' },
+      { key: 'week', name: '本周', icon: '📅' },
+      { key: 'month', name: '本月', icon: '🗓️' },
+      { key: 'run', name: '跑步', icon: '🏃' },
+      { key: 'bike', name: '骑行', icon: '🚴' },
+      { key: 'swim', name: '游泳', icon: '🏊' }
     ],
-    trendData: {
-      dates: [],
-      scores: [],
-      distances: []
-    },
     isEmpty: true
   },
 
   onLoad() {
-    this.loadHistory();
+    const now = new Date();
+    const dateStr = `${now.getMonth() + 1}月${now.getDate()}日`;
+    this.setData({ currentDate: dateStr });
   },
 
   onShow() {
@@ -41,15 +39,13 @@ Page({
   },
 
   loadHistory() {
-    const history = app.getTrainingHistory();
+    const history = app.getTrainingHistory ? app.getTrainingHistory() : [];
     const totalStats = this.calculateTotalStats(history);
-    const trendData = this.calculateTrendData(history.slice(0, 10));
 
     this.setData({
       historyList: history,
       filteredList: history,
       totalStats,
-      trendData,
       isEmpty: history.length === 0
     });
 
@@ -58,7 +54,7 @@ Page({
 
   calculateTotalStats(history) {
     if (history.length === 0) {
-      return { count: 0, distance: 0, avgScore: 0 };
+      return { count: 0, distance: '0.0', avgScore: 0 };
     }
 
     const totalDistance = history.reduce((sum, item) => sum + parseFloat(item.distance || 0), 0);
@@ -69,14 +65,6 @@ Page({
       distance: totalDistance.toFixed(1),
       avgScore: Math.round(totalScore / history.length)
     };
-  },
-
-  calculateTrendData(history) {
-    const dates = history.map(item => item.dateStr || '').slice().reverse();
-    const scores = history.map(item => parseFloat(item.score || 0)).slice().reverse();
-    const distances = history.map(item => parseFloat(item.distance || 0)).slice().reverse();
-
-    return { dates, scores, distances };
   },
 
   applyFilter(filter) {
@@ -91,6 +79,13 @@ Page({
       case 'month':
         const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
         filtered = this.data.historyList.filter(item => new Date(item.date) >= monthAgo);
+        break;
+      case 'run':
+      case 'bike':
+      case 'swim':
+        filtered = this.data.historyList.filter(item => 
+          (item.trainingType || '').toLowerCase().includes(filter)
+        );
         break;
       default:
         filtered = this.data.historyList;
@@ -115,18 +110,19 @@ Page({
   },
 
   deleteRecord(e) {
-    const { id, index } = e.currentTarget.dataset;
+    const { id } = e.currentTarget.dataset;
     
     wx.showModal({
       title: '删除确认',
       content: '确定要删除这条训练记录吗？',
       success: (res) => {
         if (res.confirm) {
-          const history = app.getTrainingHistory();
+          const history = app.getTrainingHistory ? app.getTrainingHistory() : [];
           const newHistory = history.filter(item => item.id !== id);
           wx.setStorageSync('trainingHistory', newHistory);
-          app.globalData.trainingHistory = newHistory;
-          
+          if (app.globalData) {
+            app.globalData.trainingHistory = newHistory;
+          }
           this.loadHistory();
           wx.showToast({
             title: '删除成功',
@@ -144,20 +140,21 @@ Page({
   },
 
   getScoreColor(score) {
-    if (score >= 85) return '#00FF88';
-    if (score >= 70) return '#00D9FF';
-    if (score >= 50) return '#FFB800';
-    return '#FF6B6B';
+    if (score >= 85) return '#22c55e';
+    if (score >= 70) return '#3b82f6';
+    if (score >= 50) return '#fbbf24';
+    return '#ef4444';
   },
 
   getTypeIcon(type) {
-    const icons = {
-      '有氧训练': '🌊',
-      '间歇训练': '⚡',
-      '恢复训练': '🌿',
-      '长距离训练': '🏔️',
-      '力量训练': '💪'
-    };
-    return icons[type] || '🏃';
+    const typeLower = (type || '').toLowerCase();
+    if (typeLower.includes('run') || typeLower.includes('跑步')) return '🏃';
+    if (typeLower.includes('bike') || typeLower.includes('骑行')) return '🚴';
+    if (typeLower.includes('swim') || typeLower.includes('游泳')) return '🏊';
+    if (typeLower.includes('有氧')) return '🌊';
+    if (typeLower.includes('间歇')) return '⚡';
+    if (typeLower.includes('力量')) return '💪';
+    if (typeLower.includes('长距离')) return '🏔️';
+    return '🏃';
   }
-})
+});

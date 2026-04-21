@@ -1,13 +1,31 @@
-<!-- pages/race/race.wxml -->
+<!-- pages/race/race.wxml - Sigma深色风格赛事页面 -->
 <view class="container">
   <!-- 无赛事状态 -->
   <view wx:if="{{!currentRace}}" class="empty-state">
-    <view class="empty-icon">🏆</view>
-    <text class="empty-title">设置你的目标赛事</text>
-    <text class="empty-desc">设定目标后，我们将为你制定科学的训练计划</text>
-    <button class="set-race-btn" bindtap="setRace">
-      <text>添加目标赛事</text>
-    </button>
+    <view class="empty-content">
+      <view class="empty-icon">🏆</view>
+      <text class="empty-title">设置你的目标赛事</text>
+      <text class="empty-desc">设定目标后，我们将为你制定科学的训练计划</text>
+      <button class="btn-primary" bindtap="setRace">
+        <text class="btn-icon">🎯</text>
+        <text>添加目标赛事</text>
+      </button>
+    </view>
+    
+    <!-- 近期赛事推荐 -->
+    <view class="recommend-section">
+      <text class="section-title">近期赛事推荐</text>
+      <view class="recommend-list">
+        <view class="recommend-item" wx:for="{{recommendRaces}}" wx:key="index" bindtap="selectRace" data-race="{{item}}">
+          <view class="recommend-icon">{{item.icon}}</view>
+          <view class="recommend-info">
+            <text class="recommend-name">{{item.name}}</text>
+            <text class="recommend-date">{{item.date}}</text>
+          </view>
+          <text class="recommend-arrow">›</text>
+        </view>
+      </view>
+    </view>
   </view>
 
   <!-- 有赛事状态 -->
@@ -15,80 +33,124 @@
     <!-- 倒计时卡片 -->
     <view class="countdown-card">
       <view class="countdown-header">
+        <view class="race-badge">
+          <text class="race-icon">{{currentRace.icon || '🏆'}}</text>
+          <text class="race-type">{{currentRace.typeText}}</text>
+        </view>
+        <text class="countdown-days">{{daysUntilRace}}</text>
+      </view>
+      <view class="countdown-main">
         <text class="race-name">{{currentRace.name}}</text>
-        <text class="race-type">{{currentRace.typeText}}</text>
+        <text class="race-date">{{currentRace.date}}</text>
       </view>
-      <view class="countdown-body">
-        <view class="countdown-number">{{daysUntilRace}}</view>
-        <text class="countdown-label">天后</text>
+      <view class="countdown-footer">
+        <view class="countdown-info">
+          <text class="info-label">备赛天数</text>
+          <text class="info-value">{{currentRace.preparationDays}}天</text>
+        </view>
+        <view class="countdown-divider"></view>
+        <view class="countdown-info">
+          <text class="info-label">已训练</text>
+          <text class="info-value">{{currentRace.preparationDays - daysUntilRace}}天</text>
+        </view>
       </view>
-      <view class="countdown-date">{{currentRace.date}}</view>
     </view>
 
     <!-- 备赛进度 -->
     <view class="card progress-card">
       <view class="card-header">
-        <text class="card-title">备赛进度</text>
-        <text class="progress-text">{{progress}}%</text>
+        <text class="card-title">📊 备赛进度</text>
+        <text class="progress-value">{{progress}}%</text>
       </view>
       <view class="progress-bar">
         <view class="progress-fill" style="width: {{progress}}%"></view>
       </view>
-      <view class="progress-info">
-        <text class="info-item">已备赛 {{currentRace.preparationDays - daysUntilRace}} 天</text>
-        <text class="info-item">目标 {{currentRace.preparationDays}} 天</text>
+      <view class="progress-tags">
+        <view class="progress-tag">
+          <text class="tag-icon">✅</text>
+          <text class="tag-text">已完成 {{progress}}%</text>
+        </view>
+        <view class="progress-tag">
+          <text class="tag-icon">📈</text>
+          <text class="tag-text">目标 {{currentRace.target}}</text>
+        </view>
       </view>
     </view>
 
     <!-- 本周训练重点 -->
     <view class="card plan-card">
       <view class="card-header">
-        <text class="card-title">本周训练重点</text>
+        <text class="card-title">🎯 本周训练重点</text>
       </view>
-      <view class="plan-content" wx:if="{{trainingPlan}}">
-        <view class="plan-item">
-          <text class="plan-icon">🏊</text>
-          <text class="plan-text">游泳 {{trainingPlan.weeklyTraining.swim}}</text>
-        </view>
-        <view class="plan-item">
-          <text class="plan-icon">🚴</text>
-          <text class="plan-text">骑行 {{trainingPlan.weeklyTraining.bike}}</text>
-        </view>
-        <view class="plan-item">
+      <view class="plan-grid" wx:if="{{trainingPlan}}">
+        <view class="plan-item run">
           <text class="plan-icon">🏃</text>
-          <text class="plan-text">跑步 {{trainingPlan.weeklyTraining.run}}</text>
+          <view class="plan-info">
+            <text class="plan-value">{{trainingPlan.weeklyTraining.run}}</text>
+            <text class="plan-label">跑步</text>
+          </view>
         </view>
-        <view class="plan-item">
+        <view class="plan-item bike">
+          <text class="plan-icon">🚴</text>
+          <view class="plan-info">
+            <text class="plan-value">{{trainingPlan.weeklyTraining.bike}}</text>
+            <text class="plan-label">骑行</text>
+          </view>
+        </view>
+        <view class="plan-item swim">
+          <text class="plan-icon">🏊</text>
+          <view class="plan-info">
+            <text class="plan-value">{{trainingPlan.weeklyTraining.swim}}</text>
+            <text class="plan-label">游泳</text>
+          </view>
+        </view>
+        <view class="plan-item strength">
           <text class="plan-icon">💪</text>
-          <text class="plan-text">力量 {{trainingPlan.weeklyTraining.strength}}</text>
+          <view class="plan-info">
+            <text class="plan-value">{{trainingPlan.weeklyTraining.strength}}</text>
+            <text class="plan-label">力量</text>
+          </view>
         </view>
       </view>
-      <view class="plan-focus">
+      <view class="focus-box" wx:if="{{trainingPlan}}">
         <text class="focus-label">当前重点：</text>
-        <text class="focus-text">{{trainingPlan.focusThisWeek}}</text>
+        <text class="focus-value">{{trainingPlan.focusThisWeek}}</text>
       </view>
     </view>
 
-    <!-- 补给建议 -->
+    <!-- 备赛建议 -->
     <view class="card tips-card">
       <view class="card-header">
-        <text class="card-title">备赛建议</text>
+        <text class="card-title">💡 备赛建议</text>
       </view>
       <view class="tips-list">
-        <view class="tip-item">
+        <view class="tip-item" wx:if="{{trainingPlan.nutrition}}">
           <text class="tip-icon">🍽️</text>
-          <text class="tip-text">{{trainingPlan.nutrition}}</text>
+          <view class="tip-content">
+            <text class="tip-title">营养建议</text>
+            <text class="tip-text">{{trainingPlan.nutrition}}</text>
+          </view>
         </view>
-        <view class="tip-item">
-          <text class="tip-icon">💡</text>
-          <text class="tip-text">{{trainingPlan.tips}}</text>
+        <view class="tip-item" wx:if="{{trainingPlan.tips}}">
+          <text class="tip-icon">📌</text>
+          <view class="tip-content">
+            <text class="tip-title">训练提示</text>
+            <text class="tip-text">{{trainingPlan.tips}}</text>
+          </view>
         </view>
       </view>
     </view>
 
-    <!-- 历史训练 -->
-    <button class="view-history-btn" bindtap="viewHistory">
-      查看训练记录
-    </button>
+    <!-- 操作按钮 -->
+    <view class="action-section">
+      <button class="btn-secondary" bindtap="viewHistory">
+        <text>📋</text>
+        <text>训练记录</text>
+      </button>
+      <button class="btn-primary" bindtap="startTraining">
+        <text>✏️</text>
+        <text>开始训练</text>
+      </button>
+    </view>
   </view>
 </view>
