@@ -1,0 +1,112 @@
+{
+  "collectionName": "medals",
+  "description": "运动勋章表",
+  "schema": {
+    "bsonType": "object",
+    "required": ["user_id", "medal_type", "medal_name", "earned_at"],
+    "properties": {
+      "_id": {
+        "bsonType": "string",
+        "description": "记录ID"
+      },
+      "user_id": {
+        "bsonType": "string",
+        "description": "用户ID"
+      },
+      "medal_type": {
+        "bsonType": "string",
+        "description": "勋章类型标识"
+      },
+      "medal_name": {
+        "bsonType": "string",
+        "description": "勋章名称"
+      },
+      "medal_icon": {
+        "bsonType": "string",
+        "description": "勋章图标URL"
+      },
+      "condition": {
+        "bsonType": "string",
+        "description": "获得条件说明"
+      },
+      "earned_at": {
+        "bsonType": "date",
+        "description": "获得时间"
+      }
+    }
+  },
+  "indexes": [
+    {
+      "indexName": "user_id",
+      "indexType": "normal"
+    },
+    {
+      "indexName": "user_id_medal_type",
+      "indexType": "unique",
+      "fields": ["user_id", "medal_type"]
+    }
+  ],
+  "medalDefinitions": [
+    {
+      "type": "medal_first_checkin",
+      "name": "首次打卡",
+      "icon": "/assets/medals/first_checkin.png",
+      "condition": "完成首次训练"
+    },
+    {
+      "type": "medal_7day_streak",
+      "name": "7天连续",
+      "icon": "/assets/medals/7day_streak.png",
+      "condition": "连续运动7天"
+    },
+    {
+      "type": "medal_30day_streak",
+      "name": "30天连续",
+      "icon": "/assets/medals/30day_streak.png",
+      "condition": "连续运动30天"
+    },
+    {
+      "type": "medal_100day_streak",
+      "name": "百日达人",
+      "icon": "/assets/medals/100day_streak.png",
+      "condition": "连续运动100天"
+    },
+    {
+      "type": "medal_monthly_50km",
+      "name": "月跑50K",
+      "icon": "/assets/medals/monthly_50km.png",
+      "condition": "单月跑量达到50公里"
+    },
+    {
+      "type": "medal_monthly_100km",
+      "name": "月跑100K",
+      "icon": "/assets/medals/monthly_100km.png",
+      "condition": "单月跑量达到100公里"
+    },
+    {
+      "type": "medal_early_bird",
+      "name": "早起鸟",
+      "icon": "/assets/medals/early_bird.png",
+      "condition": "早上6点前完成训练"
+    },
+    {
+      "type": "medal_night_owl",
+      "name": "夜猫子",
+      "icon": "/assets/medals/night_owl.png",
+      "condition": "晚上11点后完成训练"
+    },
+    {
+      "type": "medal_half_marathon",
+      "name": "半马达人",
+      "icon": "/assets/medals/half_marathon.png",
+      "condition": "单次跑步超过21公里"
+    },
+    {
+      "type": "medal_full_marathon",
+      "name": "全马完成",
+      "icon": "/assets/medals/full_marathon.png",
+      "condition": "完成全程马拉松(42.195公里)"
+    }
+  ],
+  "data": []
+}

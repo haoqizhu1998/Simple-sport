@@ -1,0 +1,74 @@
+{
+  "collectionName": "health_profiles",
+  "description": "健康档案表",
+  "schema": {
+    "bsonType": "object",
+    "required": ["user_id", "updated_at"],
+    "properties": {
+      "_id": {
+        "bsonType": "string",
+        "description": "档案ID"
+      },
+      "user_id": {
+        "bsonType": "string",
+        "description": "用户ID"
+      },
+      "age": {
+        "bsonType": "int",
+        "description": "年龄"
+      },
+      "gender": {
+        "enum": ["male", "female", "other", ""],
+        "description": "性别"
+      },
+      "height": {
+        "bsonType": "double",
+        "description": "身高(cm)"
+      },
+      "weight": {
+        "bsonType": "double",
+        "description": "体重(kg)"
+      },
+      "body_type": {
+        "enum": ["slim", "normal", "overweight", "obese", ""],
+        "description": "体型"
+      },
+      "symptoms": {
+        "bsonType": "array",
+        "description": "身体症状",
+        "items": {
+          "bsonType": "string"
+        }
+      },
+      "injuries": {
+        "bsonType": "array",
+        "description": "运动损伤",
+        "items": {
+          "bsonType": "string"
+        }
+      },
+      "health_goals": {
+        "bsonType": "array",
+        "description": "健康目标",
+        "items": {
+          "bsonType": "string"
+        }
+      },
+      "exercise_frequency": {
+        "enum": ["rarely", "1_2_per_week", "3_4_per_week", "daily", ""],
+        "description": "运动频率"
+      },
+      "updated_at": {
+        "bsonType": "date",
+        "description": "更新时间"
+      }
+    }
+  },
+  "indexes": [
+    {
+      "indexName": "user_id",
+      "indexType": "unique"
+    }
+  ],
+  "data": []
+}

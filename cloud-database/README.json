@@ -1,0 +1,75 @@
+{
+  "title": "Simple运动小程序 - 云数据库初始化",
+  "version": "1.0.0",
+  "description": "微信云开发数据库集合初始化配置",
+  "created": "2024-01-01",
+  "collections": [
+    {
+      "name": "users",
+      "description": "用户信息表",
+      "indexes": [
+        {
+          "name": "_id",
+          "type": "unique",
+          "fields": ["_id"]
+        }
+      ]
+    },
+    {
+      "name": "health_profiles",
+      "description": "健康档案表",
+      "indexes": [
+        {
+          "name": "user_id",
+          "type": "unique",
+          "fields": ["user_id"]
+        }
+      ]
+    },
+    {
+      "name": "data_connections",
+      "description": "数据平台连接表",
+      "indexes": [
+        {
+          "name": "user_id_platform",
+          "type": "unique",
+          "fields": ["user_id", "platform"]
+        }
+      ]
+    },
+    {
+      "name": "medals",
+      "description": "运动勋章表",
+      "indexes": [
+        {
+          "name": "user_id",
+          "type": "normal",
+          "fields": ["user_id"]
+        },
+        {
+          "name": "user_id_medal_type",
+          "type": "unique",
+          "fields": ["user_id", "medal_type"]
+        }
+      ]
+    }
+  ],
+  "initCommands": [
+    "// 1. 创建集合",
+    "// 在微信开发者工具中手动创建以下集合：",
+    "// - users",
+    "// - health_profiles",
+    "// - data_connections",
+    "// - medals",
+    "",
+    "// 2. 设置权限",
+    "// 建议将所有集合的读写权限设置为：",
+    "// - 仅创建者可读写 (read: true, create: true)",
+    "",
+    "// 3. 导入数据（如需预置勋章定义）",
+    "// 可使用medals.json中的medalDefinitions",
+    "",
+    "// 4. 云函数login",
+    "// 需要创建login云函数处理微信授权登录"
+  ]
+}

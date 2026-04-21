@@ -5,6 +5,7 @@
     "pages/result/result",
     "pages/history/history",
     "pages/race/race",
+    "pages/user/user",
     "pages/profile/profile",
     "pages/ocr/ocr"
   ],
@@ -16,7 +17,7 @@
     "backgroundColor": "#0a0a0b"
   },
   "tabBar": {
-    "color": "rgba(255, 255, 255, 0.4)",
+    "color": "rgba(255,255,255,0.6)",
     "selectedColor": "#8b5cf6",
     "backgroundColor": "#0a0a0b",
     "borderStyle": "black",
@@ -40,7 +41,7 @@
         "selectedIconPath": "assets/icons/race-active.png"
       },
       {
-        "pagePath": "pages/profile/profile",
+        "pagePath": "pages/user/user",
         "text": "我的",
         "iconPath": "assets/icons/profile.png",
         "selectedIconPath": "assets/icons/profile-active.png"

@@ -1,0 +1,51 @@
+{
+  "collectionName": "data_connections",
+  "description": "数据平台连接表",
+  "schema": {
+    "bsonType": "object",
+    "required": ["user_id", "platform", "created_at"],
+    "properties": {
+      "_id": {
+        "bsonType": "string",
+        "description": "记录ID"
+      },
+      "user_id": {
+        "bsonType": "string",
+        "description": "用户ID"
+      },
+      "platform": {
+        "enum": ["garmin", "coros", "keep", "ypq", "codoon", "nike"],
+        "description": "平台标识"
+      },
+      "access_token": {
+        "bsonType": "string",
+        "description": "访问令牌(加密存储)"
+      },
+      "refresh_token": {
+        "bsonType": "string",
+        "description": "刷新令牌"
+      },
+      "last_sync_time": {
+        "bsonType": "date",
+        "description": "最后同步时间"
+      },
+      "status": {
+        "enum": ["connected", "disconnected"],
+        "description": "连接状态",
+        "default": "connected"
+      },
+      "created_at": {
+        "bsonType": "date",
+        "description": "创建时间"
+      }
+    }
+  },
+  "indexes": [
+    {
+      "indexName": "user_id_platform",
+      "indexType": "unique",
+      "fields": ["user_id", "platform"]
+    }
+  ],
+  "data": []
+}
