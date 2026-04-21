@@ -1,0 +1,173 @@
+<!-- pages/user/user.wxml - 用户中心页面 -->
+<view class="container">
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{isLoading}}">
+    <text>加载中...</text>
+  </view>
+
+  <!-- 未登录状态 -->
+  <view class="login-prompt" wx:elif="{{!isLogin}}">
+    <image class="logo" src="/assets/icons/profile.png" mode="aspectFit"></image>
+    <text class="login-title">登录Simple运动</text>
+    <text class="login-desc">登录后同步训练数据，获取专属运动分析</text>
+    <button class="login-btn" bindtap="doLogin">微信登录</button>
+  </view>
+
+  <!-- 已登录状态 -->
+  <view class="content" wx:else>
+    <!-- 用户信息卡片 -->
+    <view class="profile-card">
+      <view class="user-info">
+        <image class="avatar" src="{{userInfo.avatarUrl || '/assets/icons/profile.png'}}" mode="aspectFill"></image>
+        <view class="user-detail">
+          <text class="user-name">{{userInfo.nickName || '运动达人'}}</text>
+          <text class="user-level">Lv.{{userInfo.level || 1}}</text>
+        </view>
+      </view>
+      <button class="logout-btn" bindtap="doLogout">退出</button>
+    </view>
+
+    <!-- 统计数据 -->
+    <view class="stats-card">
+      <view class="stat-item">
+        <text class="stat-value">{{stats.totalTrainings || 0}}</text>
+        <text class="stat-label">训练次数</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-value">{{stats.totalDistance || 0}}</text>
+        <text class="stat-label">总里程(km)</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-value">{{stats.currentStreak || 0}}</text>
+        <text class="stat-label">连续天数</text>
+      </view>
+    </view>
+
+    <!-- 健康档案 -->
+    <view class="section">
+      <view class="section-title">健康档案</view>
+      <view class="health-card">
+        <view class="health-row">
+          <text class="health-label">身高</text>
+          <text class="health-value">{{healthProfile.height || '--'}} cm</text>
+        </view>
+        <view class="health-row">
+          <text class="health-label">体重</text>
+          <text class="health-value">{{healthProfile.weight || '--'}} kg</text>
+        </view>
+        <view class="health-row">
+          <text class="health-label">年龄</text>
+          <text class="health-value">{{healthProfile.age || '--'}} 岁</text>
+        </view>
+        <view class="health-row">
+          <text class="health-label">最大心率</text>
+          <text class="health-value">{{healthProfile.maxHR || '--'}} bpm</text>
+        </view>
+        <button class="edit-btn" bindtap="showHealthModal">编辑健康档案</button>
+      </view>
+    </view>
+
+    <!-- 勋章墙 -->
+    <view class="section" wx:if="{{medals.length > 0}}">
+      <view class="section-title">我的勋章</view>
+      <view class="medals-card">
+        <view class="medal-item" wx:for="{{medals}}" wx:key="id">
+          <image class="medal-icon" src="{{item.icon}}" mode="aspectFit"></image>
+          <text class="medal-name">{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 数据连接 -->
+    <view class="section">
+      <view class="section-title">数据连接</view>
+      <view class="connection-list">
+        <view class="connection-item {{item.connected ? 'connected' : ''}}" 
+              wx:for="{{connections}}" wx:key="platform"
+              bindtap="{{item.connected ? 'deleteConnection' : 'addConnection'}}"
+              data-platform="{{item.platform}}">
+          <text class="connection-icon">{{item.icon || '📱'}}</text>
+          <text class="connection-name">{{item.name}}</text>
+          <text class="connection-status">{{item.connected ? '已连接' : '未连接'}}</text>
+        </view>
+        <button class="add-connection-btn" bindtap="showConnectionModal">添加数据源</button>
+      </view>
+    </view>
+
+    <!-- 设置菜单 -->
+    <view class="section">
+      <view class="section-title">设置</view>
+      <view class="menu-list">
+        <view class="menu-item" bindtap="setAPIUrl">
+          <text class="menu-icon">⚙️</text>
+          <text class="menu-text">API服务器</text>
+          <text class="menu-arrow">›</text>
+        </view>
+        <view class="menu-item" bindtap="clearAllData">
+          <text class="menu-icon">🗑️</text>
+          <text class="menu-text danger">清除数据</text>
+          <text class="menu-arrow">›</text>
+        </view>
+        <view class="menu-item" bindtap="showAbout">
+          <text class="menu-icon">ℹ️</text>
+          <text class="menu-text">关于Simple运动</text>
+          <text class="menu-arrow">›</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 健康档案弹窗 -->
+  <view class="modal" wx:if="{{showHealthModal}}">
+    <view class="modal-mask" bindtap="hideHealthModal"></view>
+    <view class="modal-content">
+      <view class="modal-title">健康档案</view>
+      <view class="form-item">
+        <text class="form-label">身高 (cm)</text>
+        <input class="form-input" type="digit" value="{{healthProfile.height}}" 
+               data-field="height" bindinput="onHealthInput" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">体重 (kg)</text>
+        <input class="form-input" type="digit" value="{{healthProfile.weight}}" 
+               data-field="weight" bindinput="onHealthInput" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">年龄</text>
+        <input class="form-input" type="number" value="{{healthProfile.age}}" 
+               data-field="age" bindinput="onHealthInput" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">最大心率 (bpm)</text>
+        <input class="form-input" type="number" value="{{healthProfile.maxHR}}" 
+               data-field="maxHR" bindinput="onHealthInput" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">静息心率 (bpm)</text>
+        <input class="form-input" type="number" value="{{healthProfile.restingHR}}" 
+               data-field="restingHR" bindinput="onHealthInput" />
+      </view>
+      <view class="modal-buttons">
+        <button class="modal-btn cancel" bindtap="hideHealthModal">取消</button>
+        <button class="modal-btn confirm" bindtap="saveHealthProfile">保存</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 数据连接弹窗 -->
+  <view class="modal" wx:if="{{showConnectionModal}}">
+    <view class="modal-mask" bindtap="hideConnectionModal"></view>
+    <view class="modal-content">
+      <view class="modal-title">添加数据源</view>
+      <view class="platform-list">
+        <button class="platform-btn" data-platform="strava" bindtap="addConnection">Strava</button>
+        <button class="platform-btn" data-platform="garmin" bindtap="addConnection">Garmin</button>
+        <button class="platform-btn" data-platform="apple" bindtap="addConnection">Apple Health</button>
+        <button class="platform-btn" data-platform="huawei" bindtap="addConnection">华为健康</button>
+      </view>
+      <button class="modal-btn cancel" bindtap="hideConnectionModal">取消</button>
+    </view>
+  </view>
+</view>
