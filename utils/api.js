@@ -1,9 +1,18 @@
 /**
  * API请求工具 - 连接后端Node.js服务
- * 部署后请在 app.js 中配置 API_BASE_URL
  */
 
-const API_BASE_URL = 'http://47.111.170.178:3000/api';  // 部署后修改为实际地址
+const API_BASE_URL = 'http://47.111.170.178:3000/api';
+
+// 调试环境使用模拟openid
+const getOpenid = () => {
+  let openid = wx.getStorageSync('openid');
+  if (!openid) {
+    openid = 'debug_test_openid_' + Date.now();
+    wx.setStorageSync('openid', openid);
+  }
+  return openid;
+};
 
 /**
  * Promise封装wx.request
@@ -11,11 +20,18 @@ const API_BASE_URL = 'http://47.111.170.178:3000/api';  // 部署后修改为实
 const request = (options) => {
   return new Promise((resolve, reject) => {
     const token = wx.getStorageSync('token');
-
+    const openid = getOpenid();
+    
+    // 调试环境自动注入openid
+    const data = options.data || {};
+    if (!data.openid) {
+      data.openid = openid;
+    }
+    
     wx.request({
       url: API_BASE_URL + options.url,
       method: options.method || 'GET',
-      data: options.data,
+      data: data,
       header: {
         'Content-Type': 'application/json',
         'Authorization': token ? `Bearer ${token}` : ''
@@ -42,7 +58,6 @@ const request = (options) => {
   });
 };
 
-// 导出各模块API
 module.exports = {
   // 认证
   login: (data) => request({ url: '/auth/login', method: 'POST', data }),
@@ -69,14 +84,10 @@ module.exports = {
   getTrainingHistory: () => request({ url: '/training/history' }),
   addTraining: (data) => request({ url: '/training', method: 'POST', data }),
   deleteTraining: (id) => request({ url: `/training/${id}`, method: 'DELETE' }),
-  
-  // AI训练分析
   analyzeTraining: (data) => request({ url: '/training/analyze', method: 'POST', data }),
   
-  // 导出API_BASE_URL供外部配置
-  setBaseUrl: (url) => {
-    module.exports.API_BASE_URL = url;
-    wx.setStorageSync('apiBaseUrl', url);
-  },
-  getBaseUrl: () => API_BASE_URL
+  // 工具方法
+  setBaseUrl: (url) => { API_BASE_URL = url; },
+  getBaseUrl: () => API_BASE_URL,
+  getOpenid: getOpenid
 };
