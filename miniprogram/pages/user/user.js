@@ -198,16 +198,35 @@ Page({
   },
 
   doLogin(loginData) {
+    const token = wx.getStorageSync('token');
+    const openid = wx.getStorageSync('openid') || 'test_openid_debug';
+    const data = { ...loginData, openid };
+    
     wx.showLoading({ title: '登录中...' });
-    api.login(loginData).then(data => {
-      wx.hideLoading();
-      wx.setStorageSync('token', data.token);
-      this.setData({ isLoggedIn: true });
-      this.loadUserData();
-    }).catch(err => {
-      wx.hideLoading();
-      console.error('登录失败', err);
-      wx.showToast({ title: '登录失败', icon: 'none' });
+    
+    wx.request({
+      url: 'http://47.111.170.178:3000/api/auth/login',
+      method: 'POST',
+      data: data,
+      header: {
+        'Content-Type': 'application/json',
+        'Authorization': token ? `Bearer ${token}` : ''
+      },
+      success: (res) => {
+        wx.hideLoading();
+        if (res.data.code === 0) {
+          wx.setStorageSync('token', res.data.data.token);
+          this.setData({ isLoggedIn: true });
+          this.loadUserData();
+        } else {
+          wx.showToast({ title: res.data.msg || '登录失败', icon: 'none' });
+        }
+      },
+      fail: (err) => {
+        wx.hideLoading();
+        wx.showToast({ title: '网络错误', icon: 'none' });
+      }
     });
   },
+
 
