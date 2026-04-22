@@ -3,7 +3,7 @@
  * 部署后请在 app.js 中配置 API_BASE_URL
  */
 
-const API_BASE_URL = 'http://你的服务器IP:3000/api';  // 部署后修改为实际地址
+const API_BASE_URL = 'http://47.111.170.178:3000/api';  // 部署后修改为实际地址
 
 /**
  * Promise封装wx.request
