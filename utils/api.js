@@ -2,7 +2,7 @@
  * API请求工具 - 连接后端Node.js服务
  */
 
-const API_BASE_URL = 'http://47.111.170.178:3000/api';
+let _API_BASE_URL = 'http://47.111.170.178:3000/api';
 
 // 调试环境使用模拟openid
 const getOpenid = () => {
@@ -29,7 +29,7 @@ const request = (options) => {
     }
     
     wx.request({
-      url: API_BASE_URL + options.url,
+      url: _API_BASE_URL + options.url,
       method: options.method || 'GET',
       data: data,
       header: {
@@ -87,7 +87,7 @@ module.exports = {
   analyzeTraining: (data) => request({ url: '/training/analyze', method: 'POST', data }),
   
   // 工具方法
-  setBaseUrl: (url) => { API_BASE_URL = url; },
+  setBaseUrl: (url) => { _API_BASE_URL = url; },
   getBaseUrl: () => API_BASE_URL,
   getOpenid: getOpenid
 };
